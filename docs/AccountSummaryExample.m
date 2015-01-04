@@ -1,9 +1,9 @@
-%%
-% For more information, see the official site:
-% <https://github.com/softwarespartan github.io>
+%% Account Summary
+% For most recent version, see the official docs at
+% <http://softwarespartan.github.io/IB4m/docs/html/AccountSummaryExample.html github.io/IB4m>
 
 
-%% Initialize session with TWS and request account summary
+%% Initialize session with Trader Workstation
 
 % initialize session with TWS
 session = TWS.Session.getInstance();
@@ -45,10 +45,12 @@ attrkeys = [                               ...
 % establish connection with TWS
 session.eClientSocket.eConnect('127.0.0.1',7496,0);
 
+%% Make request for account summary
+
 % request account attributes
 session.eClientSocket.reqAccountSummary(0,'All',attrkeys);  pause(1);
 
-%% Retreive account summary events from the event buffer and print
+%% Processing Account Summary Events
 
 % get the event from the local buffer and convert to cell array
 attrs = collection2cell(buf.get().data);
@@ -63,6 +65,9 @@ cellfun(@(a)                         ...
                ),                    ...
         attrs                        ...
 );
+
+%% See Also
+% <http://softwarespartan.github.io/IB4m/docs/html/AccountUpdatesExample.html AccountUpdatesExample> | <http://softwarespartan.github.io/IB4m/docs/html/PositionsExample.html PositionsExample>
 
 %% References
 % Interactive Brokers API: 
