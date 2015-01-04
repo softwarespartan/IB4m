@@ -1,0 +1,208 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Market Scanner Subscriptions</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-01-02"><meta name="DC.source" content="TWSScannerSubscriptionExample.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Market Scanner Subscriptions</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Introduction</a></li><li><a href="#2">Initialize session with Trader Workstation</a></li><li><a href="#3">Create Scanner Subscription Definition</a></li><li><a href="#4">Request Scanner Subscription</a></li><li><a href="#6">Process Market Scanner Events</a></li><li><a href="#8">See Also</a></li><li><a href="#9">References</a></li></ul></div><h2>Introduction<a name="1"></a></h2><p>Market Scanners allow you to quickly and easily scan global markets for the top performing contracts. Variables, filters and parameters allow you to create unique, completely customized scans. For example, you may want to find the top ten most active US stocks with a price of USD 30.00 or lower, but only in the Real Estate industry. Or, search for all exchange-listed US Corporate Bonds with an A1 Moody's rating or better. The search definitions are practically limitless.</p><p>Interactive Brokers provides API access to many preconfigured scanner definitions such as:</p><div><ul><li>Most Active</li><li>Top % Gainers and Losers</li><li>Hot by Price and Volume</li><li>Top Trade Rate</li><li>Highest and Lowest Option Implied Volatility</li><li>13-, 26- and 52-week High and Low</li><li>High Dividend Yield</li></ul></div><p>and many more.  See <a href="https://www.interactivebrokers.com/en/software/api/apiguide/tables/available_market_scanners.htm">Market Scanner Definitions</a> for all avaliable preconfigured scanners and associated "scanCodes".</p><h2>Initialize session with Trader Workstation<a name="2"></a></h2><pre class="codeinput"><span class="comment">% initialize session with TWS</span>
+session = TWS.Session.getInstance();
+
+<span class="comment">% create local buffer for market depth events</span>
+[buf,lh] = TWS.initBufferForEvent(TWS.Events.SCANNERDATA);
+
+<span class="comment">% connect to Trader Workstation</span>
+session.eClientSocket.eConnect(<span class="string">'127.0.0.1'</span>,7496,0);
+</pre><pre class="codeoutput">added interface method: TWSNotification
+notification listener has been added
+Server Version:71
+TWS Time at connection:20150102 19:08:40 EST
+</pre><h2>Create Scanner Subscription Definition<a name="3"></a></h2><pre class="codeinput"><span class="comment">% create new scanner subscription specification</span>
+scannerSubscription = com.ib.client.ScannerSubscription();
+
+<span class="comment">% configure the scanner definition</span>
+scannerSubscription.numberOfRows(15           );
+scannerSubscription.abovePrice  (1            );
+scannerSubscription.instrument  (<span class="string">'STK'</span>        );
+scannerSubscription.scanCode    (<span class="string">'MOST_ACTIVE'</span>);
+</pre><h2>Request Scanner Subscription<a name="4"></a></h2><pre class="codeinput"><span class="comment">% request the scanner subscription with reqId 0</span>
+session.eClientSocket.reqScannerSubscription(0,scannerSubscription,[]); pause(0.5);
+</pre><p>To cancel a scanner subscription use the EClientSocket::cancelScannerSubscription method with the associated reqId to terminate (in this case reqId = 0).</p><h2>Process Market Scanner Events<a name="6"></a></h2><pre class="codeinput"><span class="comment">% create print function for scanner data objects (sd)</span>
+f = @(sd)fprintf(<span class="string">'%5s: %3d\n'</span>,char(sd.contractDetails.m_summary.m_symbol),sd.rank);
+
+<span class="comment">% print out all scanner events in the local buffer</span>
+cellfun(@(e)f(e),collection2cell(buf.get.data));
+</pre><pre class="codeoutput">  EEM:   1
+  PBR:   8
+ TVIX:   7
+  EWJ:  14
+  VXX:   2
+  GDX:   5
+  IWM:   6
+PBR A:  10
+   GE:   9
+  SPY:   0
+ AAPL:   3
+  BAC:   4
+  XLF:  12
+ SIRI:  11
+  QQQ:  13
+</pre><p>From here make a few ContractDetails request to obtain exchange information.  Then fire up MarketData + MarketDepth subscriptions.</p><h2>See Also<a name="8"></a></h2><p><a href="matlab:showdemo('TWSContractDetailsExample')">TWSContractDetailsExample</a> | <a href="matlab:showdemo('TWSMarketDataExample')">TWSMarketDataExample</a> | <a href="matlab:showdemo('TWSMarketDepthExample')">TWSMarketDepthExample</a></p><h2>References<a name="9"></a></h2><p>Interactive Brokers:</p><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/tables/available_market_scanners.htm">Market Scanner Definitions</a></li></ul></div><p>Interactive Brokers API:</p><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/reqscannersubscription.htm">EClientSocket::reqScannerSubscription</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/cancelscannersubscription.htm">EClientSocket::cancelScannerSubscription</a></li></ul></div><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/scannerdata.htm">EWrapper::scannerData</a></li></ul></div><p>TWS@Github:</p><div><ul><li><a href="https://github.com/softwarespartan/TWS/blob/master/src/com/tws/ScannerData.java">com.tws.ScannerData</a></li><li><a href="https://github.com/softwarespartan/TWS/blob/master/src/com/ib/client/ScannerSubscription.java">com.ib.client.ScannerSubscription</a></li></ul></div><p>Apache Commons:</p><div><ul><li><a href="https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html">CircularFifoBuffer</a></li></ul></div><p>Oracle:</p><div><ul><li><a href="http://docs.oracle.com/javase/8/docs/api/java/util/HashSet.html">HashSet</a></li></ul></div><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Market Scanner Subscriptions
+
+%% Introduction
+% Market Scanners allow you to quickly and easily scan global markets for the top performing contracts.
+% Variables, filters and parameters allow you to create unique, completely customized scans. 
+% For example, you may want to find the top ten most active US stocks with a price of USD 30.00 or lower, 
+% but only in the Real Estate industry. Or, search for all exchange-listed US Corporate Bonds with an A1 Moody's 
+% rating or better. The search definitions are practically limitless.
+% 
+% Interactive Brokers provides API access to many preconfigured scanner definitions such as: 
+%
+% * Most Active
+% * Top % Gainers and Losers  
+% * Hot by Price and Volume 
+% * Top Trade Rate 
+% * Highest and Lowest Option Implied Volatility 
+% * 13-, 26- and 52-week High and Low
+% * High Dividend Yield 
+%
+% and many more.  See 
+% <https://www.interactivebrokers.com/en/software/api/apiguide/tables/available_market_scanners.htm Market Scanner Definitions> 
+% for all avaliable preconfigured scanners and associated "scanCodes".
+
+%% Initialize session with Trader Workstation
+
+% initialize session with TWS
+session = TWS.Session.getInstance();
+
+% create local buffer for market depth events 
+[buf,lh] = TWS.initBufferForEvent(TWS.Events.SCANNERDATA);
+
+% connect to Trader Workstation
+session.eClientSocket.eConnect('127.0.0.1',7496,0);
+
+%% Create Scanner Subscription Definition
+
+% create new scanner subscription specification
+scannerSubscription = com.ib.client.ScannerSubscription();
+
+% configure the scanner definition 
+scannerSubscription.numberOfRows(15           );
+scannerSubscription.abovePrice  (1            );
+scannerSubscription.instrument  ('STK'        );
+scannerSubscription.scanCode    ('MOST_ACTIVE');
+
+%% Request Scanner Subscription
+
+% request the scanner subscription with reqId 0
+session.eClientSocket.reqScannerSubscription(0,scannerSubscription,[]); pause(0.5);
+
+%%
+% To cancel a scanner subscription use the EClientSocket::cancelScannerSubscription method with the associated reqId to terminate (in this case reqId = 0).
+
+%% Process Market Scanner Events
+
+% create print function for scanner data objects (sd)
+f = @(sd)fprintf('%5s: %3d\n',char(sd.contractDetails.m_summary.m_symbol),sd.rank);
+
+% print out all scanner events in the local buffer
+cellfun(@(e)f(e),collection2cell(buf.get.data));
+
+%%
+% From here make a few ContractDetails request to obtain exchange information.  Then fire up MarketData + MarketDepth subscriptions.
+
+%% See Also
+% <matlab:showdemo('TWSContractDetailsExample') TWSContractDetailsExample> | <matlab:showdemo('TWSMarketDataExample') TWSMarketDataExample> | <matlab:showdemo('TWSMarketDepthExample') TWSMarketDepthExample>
+%
+
+%% References
+%
+% Interactive Brokers:
+%
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/tables/available_market_scanners.htm Market Scanner Definitions>
+%
+% Interactive Brokers API: 
+%
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqscannersubscription.htm EClientSocket::reqScannerSubscription>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/cancelscannersubscription.htm EClientSocket::cancelScannerSubscription>
+% 
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/scannerdata.htm EWrapper::scannerData>
+%
+% TWS@Github:
+%
+% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/ScannerData.java com.tws.ScannerData>
+% * <https://github.com/softwarespartan/TWS/blob/master/src/com/ib/client/ScannerSubscription.java com.ib.client.ScannerSubscription>
+%
+% Apache Commons:
+%
+% * <https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html CircularFifoBuffer>
+%
+% Oracle:
+%
+% * <http://docs.oracle.com/javase/8/docs/api/java/util/HashSet.html HashSet>
+%
+##### SOURCE END #####
+--></body></html>

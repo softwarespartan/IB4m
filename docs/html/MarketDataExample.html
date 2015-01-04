@@ -1,0 +1,432 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Market Data (Level I)</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-01-02"><meta name="DC.source" content="TWSMarketDataExample.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Market Data (Level I)</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Initialize session with Trader Workstation</a></li><li><a href="#3">Requesting Level 1 Market Data</a></li><li><a href="#12">Processing Market Data Events (Part 1)</a></li><li><a href="#17">Processing Market Data Events (Part 2)</a></li><li><a href="#22">See Also</a></li><li><a href="#23">References</a></li></ul></div><h2>Initialize session with Trader Workstation<a name="1"></a></h2><pre class="codeinput"><span class="comment">% get TWS session instance</span>
+session = TWS.Session.getInstance();
+
+<span class="comment">% create local buffer for market data events with size 10,000 (default size is 32)</span>
+[databuf,datalh] = TWS.initBufferForEvent(TWS.Events.MARKETDATA,10000);
+
+<span class="comment">% create local buffer for market metadata events with size 1000</span>
+[metabuf,metalh] = TWS.initBufferForEvent(TWS.Events.MARKETMETADATA,1000);
+
+<span class="comment">% create a callback to print error messages to the command window</span>
+lherr  = event.listener(                         <span class="keyword">...</span>
+                        TWS.Events.getInstance  ,<span class="keyword">...</span>
+                        TWS.Events.ERROR        ,<span class="keyword">...</span>
+                        @(s,e)disp(e.event.data) <span class="keyword">...</span>
+                       );
+
+<span class="comment">% connect to TWS</span>
+session.eClientSocket.eConnect(<span class="string">'127.0.0.1'</span>,7496,0);
+</pre><pre class="codeoutput">added interface method: TWSNotification
+notification listener has been added
+Server Version:71
+TWS Time at connection:20150102 16:49:42 EST
+</pre><p>A callback to print out error message to the command window is particularly useful here. There are many possible errors associated with requesting Market Depth in general and in particular the specified contract/exchange might not privide the requested data.</p><h2>Requesting Level 1 Market Data<a name="3"></a></h2><p>There is a slight deviation from the native IB Java API here.  Namely, level 1 market data callbacks are separated into:</p><div><ul><li>MarketDataEvents</li><li>MarketMetadataEvents</li></ul></div><p>MarketDataEvents are produced when the market data changes.  A change in market data corresponds to changes in the size and/or price of the best ask/bid offer avaliable on the subscribed exchange.</p><p>Changes in market data (best ask/bid offer) are communicated through <i>MarketDataEvents</i> associated with EWrapper callbacks:</p><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/ticksize.htm">EWrapper::tickSize</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/tickprice.htm">EWrapper::tickPrice</a></li></ul></div><p>Many axuillary types of market data ticks can be requested as a part of the market data request.  These data are refered to as <a href="https://www.interactivebrokers.com/en/software/api/apiguide/tables/generic_tick_types.htm"><i>Generic Ticks</i></a> and are communicated through <i>MarketMetadataEvents</i>.</p><p>See <a href="https://www.interactivebrokers.com/en/software/api/apiguide/tables/tick_types.htm">Tick Types</a> for additional descriptions of tick types and associated EWrapper callback.  The bottom line is that <b>tickValue/field &lt; 10 are MarketDataEvents</b> and everything else is MarketMetadata.</p><p>The first step in constructing a market data request is to specify a contract which encapsulates the equity symbol and exchange information.</p><pre class="codeinput"><span class="comment">% create an empty stock contract</span>
+contract = com.tws.ContractFactory.GenericStockContract(<span class="string">'SPY'</span>);
+</pre><p>By default the exchange for GenericStockContract is 'SMART' which is only appropriate when placing an order request.</p><p>There are many different exchanges to choose from for data subscriptions such as:</p><div><ul><li><a href="http://en.wikipedia.org/wiki/Island_ECN">ISLAND</a></li><li><a href="http://en.wikipedia.org/wiki/NYSE_Arca">ARCA</a></li><li><a href="http://www.batstrading.com">BATS</a></li><li><a href="http://en.wikipedia.org/wiki/Direct_Edge">DRCTEDGE</a></li><li><a href="https://www.lavaflowecn.com">LAVA</a></li></ul></div><p>and many more.</p><p>Operationally, it is advisable to make a Contract Details request for a complete list of valid exchanges.</p><p>For additional information of avaliable market data accessable through Interactive Brokers see <a href="https://www.interactivebrokers.com/en/index.php?f=marketData&amp;p=mdata">Market Data Feed Options</a>.</p><p>All of the exchanges listed above list 'SPY' so any one of them will work for this example.</p><pre class="codeinput"><span class="comment">% set the exchange for which to obtain market data</span>
+contract.m_exchange = <span class="string">'ARCA'</span>;  contract.m_primaryExch = <span class="string">'ARCA'</span>;
+</pre><p>Specify the <a href="https://www.interactivebrokers.com/en/software/api/apiguide/tables/generic_tick_types.htm">Generic Tick Tags</a> (metadata) for subscription.  Note that generic ticks cannot be specified if using a <i>Snapshot</i> market data subscription.</p><pre class="codeinput"><span class="comment">% list of metadata ticks</span>
+genericTickList = [                                      <span class="keyword">...</span>
+                   <span class="string">'100,101,105,106,107,125,165,166,'</span>    <span class="keyword">...</span>
+                   <span class="string">'225,232,221,233,236,258, 47,291,'</span>    <span class="keyword">...</span>
+                   <span class="string">'293,294,295,318,370,370,377,377,'</span>    <span class="keyword">...</span>
+                   <span class="string">'381,384,384,387,388,391,407,411,'</span>    <span class="keyword">...</span>
+                   <span class="string">'428,439,439,456, 59,459,460,499,'</span>    <span class="keyword">...</span>
+                   <span class="string">'506,511,512,104,513,514,515,516,517'</span> <span class="keyword">...</span>
+                  ];
+</pre><p>Since multiple market data subscriptions can be active simultaniously it is important to provide a unique request Id for each market data request</p><pre class="codeinput">reqId = 0;
+</pre><p>Having a unique request ID, contract to specify symbol and exchange, and a list of metadata we're ready to make a market data request.</p><pre class="codeinput"><span class="comment">% request market data subscription.  Note that arg4 is read as "snapshot=false"</span>
+session.eClientSocket.reqMktData(reqId,contract,genericTickList,false,[]); pause(1);
+</pre><p>It is important to keep in mind that a continuous data subscription has been started so that MarketDataEvents will be streamed until disconnected from TWS or the subscription is cancelled. Alternatively, provide <i>true</i> (read 'snapshot=true') to only take an instantanious peak at the market data without spining up a subscription. That is, market data snapshots are one-time thing providing a single instance of top of the book market data for the equity on the specified exchange.</p><p>To cancel a market data subscription simply call EClientSocket::cancelMktData method with the associated request Id.</p><h2>Processing Market Data Events (Part 1)<a name="12"></a></h2><p>Depending on the symbol and exchange, market data events can be vary numerous. At the time of current writting, market data rate range from 45 to 5 per second:</p><p>
+<table border=1>
+<tr><td>Exchange</td><td>msg rate</td></tr>
+<tr><td>ISLAND</td><td>45</td></tr>
+<tr><td>BATS</td><td>20</td></tr>
+<tr><td>LAVA</td><td>17</td></tr>
+<tr><td>TPLUS2</td><td>5</td></tr>
+</table>
+</p><p>Market metadata events are generally fewer than data events.</p><p>First, have a look at the market data events by printing them out to the Command Window:</p><pre class="codeinput"><span class="comment">% dump market data events to the screen</span>
+cellfun(@(e)disp(e.data),collection2cell(databuf))
+</pre><pre class="codeoutput">bidPrice:205.02
+ 
+bidSize:9.0
+ 
+askPrice:205.04
+ 
+askSize:2.0
+ 
+bidSize:9.0
+ 
+askSize:2.0
+ 
+</pre><p>Simillarly, lets have a look at a few metadata events</p><pre class="codeinput"><span class="comment">% print out string representation of market metadata objects</span>
+cellfun(@(e)disp(e.data),collection2cell(metabuf))
+</pre><pre class="codeoutput">OptionCallOpenInterest:9821625
+ 
+OptionPutOpenInterest:20603997
+ 
+auctionVolume:-1
+ 
+auctionImbalance:0
+ 
+auctionPrice:-1.0
+ 
+regulatoryImbalance:0
+ 
+OptionImpliedVolatility:0.14244696914930022
+ 
+AvgVolume:1349683
+ 
+13WeekHigh:211.83500671
+ 
+13WeekLow:180.78500366
+ 
+26WeekHigh:211.83500671
+ 
+26WeekLow:180.78500366
+ 
+52WeekHigh:211.83500671
+ 
+52WeekLow:169.88499451
+ 
+OptionCallVolume:947756
+ 
+OptionPutVolume:1600045
+ 
+</pre><p>It is fairly straight forward to process market data events based on tickId. For ease of use, create cell array of market data events from the data buffer</p><pre class="codeinput"><span class="comment">% aggregate market data events in the buffer to cell array</span>
+mktDataEvents = collection2cell(databuf);
+</pre><p>Rough outline for processing events by tickId:</p><pre class="codeinput"><span class="keyword">for</span> i = 1:min(numel(mktDataEvents),10)
+
+    e = mktDataEvents{i};
+
+    <span class="keyword">switch</span> e.data.tickId
+
+        <span class="keyword">case</span> 0
+            <span class="comment">% bid size</span>
+        <span class="keyword">case</span> 1
+            <span class="comment">% bid price</span>
+        <span class="keyword">case</span> 2
+            <span class="comment">% ask price</span>
+        <span class="keyword">case</span> 3
+            <span class="comment">% ask size</span>
+        <span class="keyword">case</span> 4
+            <span class="comment">% last sale price</span>
+        <span class="keyword">case</span> 5
+            <span class="comment">% last sale size</span>
+        <span class="keyword">case</span> 8
+            <span class="comment">% total volume</span>
+        <span class="keyword">otherwise</span>
+            <span class="comment">% no op</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><h2>Processing Market Data Events (Part 2)<a name="17"></a></h2><p>When multiple market data subscriptions are active simultaniously, additional book keeping is required to match/map market data reqId to the exchange associated with the subscription.</p><p>This can be accomplished using MATLAB's built-in containers.Map or java.util.HashMap.</p><p>A java HashMap can be initialized as</p><pre class="codeinput">map = java.util.HashMap();
+</pre><p>For each market data request/subscription make an entry in the map to keep track of which reqId goes with which exchange</p><pre class="codeinput">map.put(reqId,contract.m_exchange);
+</pre><p>Then when processing events, translate the subscription request Id into a human readable exchange name</p><pre class="codeinput">map.get(databuf.get().data.reqId)
+map.get(metabuf.get().data.reqId)
+</pre><pre class="codeoutput">
+ans =
+
+ARCA
+
+
+ans =
+
+ARCA
+
+</pre><p>Using hash map ensure constant time retreival of the exchange string.  Solutions involving <i>strcmp</i> can be tedious and do not generally scale well for processing many events quickly.</p><h2>See Also<a name="22"></a></h2><p><a href="matlab:showdemo('TWSMarketDepthExample')">TWSMarketDepthExample</a> | <a href="matlab:showdemo('TWSContractDetailsExample')">TWSContractDetailsExample</a></p><h2>References<a name="23"></a></h2><p>Interactive Brokers:</p><div><ul><li><a href="https://www.interactivebrokers.com/en/index.php?f=marketData&amp;p=mdata">Market Data Feed Options</a></li></ul></div><p>Interactive Brokers API:</p><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/tables/tick_types.htm">Tick Types</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/tables/generic_tick_types.htm">Generic Tick Tags</a></li></ul></div><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/econnect.htm">EClientSocket::eConnect</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/reqmktdata.htm">EClientSocket::reqMktData</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/cancelmktdata.htm">EClientSocket::cancelMktData</a></li></ul></div><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/tickprice.htm">EWrapper::tickPrice</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/ticksize.htm">EWrapper::tickSize</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/tickstring.htm">EWrapper::tickString</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/tickgeneric.htm">EWrapper::tickGeneric</a></li></ul></div><p>TWS@Github:</p><div><ul><li><a href="https://github.com/softwarespartan/TWS/blob/master/src/com/tws/MarketData.java">com.tws.MarketData</a></li><li><a href="https://github.com/softwarespartan/TWS/blob/master/src/com/tws/MarketMetadata.java">com.tws.MarketMetadata</a></li></ul></div><p>Apache Commons:</p><div><ul><li><a href="https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html">CircularFifoBuffer</a></li></ul></div><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Market Data (Level I) 
+
+%% Initialize session with Trader Workstation
+
+% get TWS session instance
+session = TWS.Session.getInstance();
+
+% create local buffer for market data events with size 10,000 (default size is 32)
+[databuf,datalh] = TWS.initBufferForEvent(TWS.Events.MARKETDATA,10000);
+
+% create local buffer for market metadata events with size 1000
+[metabuf,metalh] = TWS.initBufferForEvent(TWS.Events.MARKETMETADATA,1000);
+
+% create a callback to print error messages to the command window
+lherr  = event.listener(                         ...
+                        TWS.Events.getInstance  ,...
+                        TWS.Events.ERROR        ,...
+                        @(s,e)disp(e.event.data) ...
+                       );
+
+% connect to TWS
+session.eClientSocket.eConnect('127.0.0.1',7496,0);
+ 
+%%
+% A callback to print out error message to the command window is particularly useful here. There are many possible errors associated with requesting Market Depth in general and in particular the specified contract/exchange might not privide the requested data.
+%
+
+%% Requesting Level 1 Market Data
+% There is a slight deviation from the native IB Java API here.  Namely, level 1 market data callbacks are separated into:
+%
+% * MarketDataEvents
+% * MarketMetadataEvents
+%
+% MarketDataEvents are produced when the market data changes.  A change in market data corresponds to changes in the size and/or price of the best ask/bid offer avaliable on the subscribed exchange.  
+%
+% Changes in market data (best ask/bid offer) are communicated through _MarketDataEvents_ associated with EWrapper callbacks:
+%
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/ticksize.htm EWrapper::tickSize>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/tickprice.htm EWrapper::tickPrice>
+%
+% Many axuillary types of market data ticks can be requested as a part of the market data request.  These data are refered to as 
+% <https://www.interactivebrokers.com/en/software/api/apiguide/tables/generic_tick_types.htm _Generic Ticks_>  
+% and are communicated through _MarketMetadataEvents_.  
+%
+% See
+% <https://www.interactivebrokers.com/en/software/api/apiguide/tables/tick_types.htm Tick Types>
+% for additional descriptions of tick types and associated EWrapper callback.  The bottom line is that *tickValue/field < 10 are MarketDataEvents* and everything else is MarketMetadata. 
+%
+
+%%
+% The first step in constructing a market data request is to specify a contract which encapsulates the equity symbol and exchange information.
+
+% create an empty stock contract
+contract = com.tws.ContractFactory.GenericStockContract('SPY');
+
+%% 
+% By default the exchange for GenericStockContract is 'SMART' which is only appropriate when placing an order request.
+%
+% There are many different exchanges to choose from for data subscriptions such as:
+%
+% * <http://en.wikipedia.org/wiki/Island_ECN ISLAND>
+% * <http://en.wikipedia.org/wiki/NYSE_Arca ARCA>
+% * <http://www.batstrading.com BATS>
+% * <http://en.wikipedia.org/wiki/Direct_Edge DRCTEDGE>
+% * <https://www.lavaflowecn.com LAVA>
+% 
+% and many more.  
+%
+% Operationally, it is advisable to make a Contract Details request for a complete list of valid exchanges. 
+%
+% For additional information of avaliable market data accessable through Interactive Brokers see <https://www.interactivebrokers.com/en/index.php?f=marketData&p=mdata Market Data Feed Options>.
+
+%%
+% All of the exchanges listed above list 'SPY' so any one of them will work for this example.
+
+% set the exchange for which to obtain market data
+contract.m_exchange = 'ARCA';  contract.m_primaryExch = 'ARCA';
+
+%%
+% Specify the <https://www.interactivebrokers.com/en/software/api/apiguide/tables/generic_tick_types.htm Generic Tick Tags> (metadata) for subscription.  Note that generic ticks cannot be specified if using a _Snapshot_ market data subscription.
+
+% list of metadata ticks
+genericTickList = [                                      ...
+                   '100,101,105,106,107,125,165,166,'    ...
+                   '225,232,221,233,236,258, 47,291,'    ...
+                   '293,294,295,318,370,370,377,377,'    ...
+                   '381,384,384,387,388,391,407,411,'    ...
+                   '428,439,439,456, 59,459,460,499,'    ...
+                   '506,511,512,104,513,514,515,516,517' ...
+                  ];
+            
+%%
+% Since multiple market data subscriptions can be active simultaniously it is important to provide a unique request Id for each market data request
+reqId = 0;
+
+%% 
+% Having a unique request ID, contract to specify symbol and exchange, and a list of metadata we're ready to make a market data request.
+
+% request market data subscription.  Note that arg4 is read as "snapshot=false"
+session.eClientSocket.reqMktData(reqId,contract,genericTickList,false,[]); pause(1);
+
+%% 
+% It is important to keep in mind that a continuous data subscription has been started so that MarketDataEvents will be streamed until disconnected from TWS or the subscription is cancelled. 
+% Alternatively, provide _true_ (read 'snapshot=true') to only take an instantanious peak at the market data without spining up a subscription.  
+% That is, market data snapshots are one-time thing providing a single instance of top of the book market data for the equity on the specified exchange. 
+
+%%
+% To cancel a market data subscription simply call EClientSocket::cancelMktData method with the associated request Id.
+
+%% Processing Market Data Events (Part 1)
+% Depending on the symbol and exchange, market data events can be vary numerous.  
+% At the time of current writting, market data rate range from 45 to 5 per second: 
+%
+% <html>
+% <table border=1>
+% <tr><td>Exchange</td><td>msg rate</td></tr>
+% <tr><td>ISLAND</td><td>45</td></tr>
+% <tr><td>BATS</td><td>20</td></tr>
+% <tr><td>LAVA</td><td>17</td></tr>
+% <tr><td>TPLUS2</td><td>5</td></tr>
+% </table>
+% </html>
+% 
+%
+% Market metadata events are generally fewer than data events.
+%
+
+%%
+% First, have a look at the market data events by printing them out to the Command Window:
+
+% dump market data events to the screen
+cellfun(@(e)disp(e.data),collection2cell(databuf))
+ 
+%%
+% Simillarly, lets have a look at a few metadata events
+
+% print out string representation of market metadata objects
+cellfun(@(e)disp(e.data),collection2cell(metabuf))
+
+%%
+% It is fairly straight forward to process market data events based on tickId.
+% For ease of use, create cell array of market data events from the data buffer
+
+% aggregate market data events in the buffer to cell array
+mktDataEvents = collection2cell(databuf);
+
+%%
+% Rough outline for processing events by tickId:
+
+for i = 1:min(numel(mktDataEvents),10)
+    
+    e = mktDataEvents{i};
+    
+    switch e.data.tickId
+        
+        case 0
+            % bid size 
+        case 1
+            % bid price 
+        case 2 
+            % ask price 
+        case 3
+            % ask size 
+        case 4
+            % last sale price
+        case 5
+            % last sale size
+        case 8 
+            % total volume
+        otherwise
+            % no op
+    end
+end
+
+%% Processing Market Data Events (Part 2)
+% When multiple market data subscriptions are active simultaniously, additional book keeping is required to match/map market data reqId to the exchange associated with the subscription.
+%
+% This can be accomplished using MATLAB's built-in containers.Map or java.util.HashMap.  
+
+%%
+% A java HashMap can be initialized as
+map = java.util.HashMap();
+
+%%
+% For each market data request/subscription make an entry in the map to keep track of which reqId goes with which exchange
+map.put(reqId,contract.m_exchange);
+
+%%
+% Then when processing events, translate the subscription request Id into a human readable exchange name
+map.get(databuf.get().data.reqId)
+map.get(metabuf.get().data.reqId)
+
+%%
+% Using hash map ensure constant time retreival of the exchange string.  Solutions involving _strcmp_ can be tedious and do not generally scale well for processing many events quickly.
+
+%% See Also
+% <matlab:showdemo('TWSMarketDepthExample') TWSMarketDepthExample> | <matlab:showdemo('TWSContractDetailsExample') TWSContractDetailsExample>
+
+%% References
+% Interactive Brokers:
+%
+% * <https://www.interactivebrokers.com/en/index.php?f=marketData&p=mdata Market Data Feed Options>
+%
+% Interactive Brokers API: 
+%
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/tables/tick_types.htm Tick Types>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/tables/generic_tick_types.htm Generic Tick Tags>
+%
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/econnect.htm EClientSocket::eConnect>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqmktdata.htm EClientSocket::reqMktData>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/cancelmktdata.htm EClientSocket::cancelMktData>
+% 
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/tickprice.htm EWrapper::tickPrice>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/ticksize.htm EWrapper::tickSize>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/tickstring.htm EWrapper::tickString>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/tickgeneric.htm EWrapper::tickGeneric>
+%
+% TWS@Github:
+%
+% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/MarketData.java com.tws.MarketData>
+% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/MarketMetadata.java com.tws.MarketMetadata>
+%
+% Apache Commons:
+%
+% * <https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html CircularFifoBuffer>
+%
+##### SOURCE END #####
+--></body></html>

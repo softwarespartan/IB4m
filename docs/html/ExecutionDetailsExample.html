@@ -1,0 +1,256 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Execution Details</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-12-31"><meta name="DC.source" content="TWSExecutionDetailsExample.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Execution Details</h1><!--introduction--><p><b>DISCLAIMER / WARNING</b></p><p>Just a heads up, this example will attempt to place an order automatically via the IB API. Please, <b>use your paper trading account</b> details when exploring this example.</p><p>See Interactive Brokers <a href="https://www.interactivebrokers.com/en/index.php?f=tws&amp;p=papertrader">paper trading page</a> for additional details</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Initialize session with Trader Workstation</a></li><li><a href="#2">Request Order Execution Details</a></li><li><a href="#7">Order Placement</a></li><li><a href="#11">Processing Execution Details Events</a></li><li><a href="#15">See Also</a></li><li><a href="#16">References</a></li></ul></div><h2>Initialize session with Trader Workstation<a name="1"></a></h2><pre class="codeinput"><span class="comment">% initialize session with TWS</span>
+session = TWS.Session.getInstance();
+
+<span class="comment">% create local buffer for exec details events</span>
+[buf,lh] = TWS.initBufferForEvent(TWS.Events.EXECUTIONDETAILS);
+
+<span class="comment">% connect to TWS</span>
+session.eClientSocket.eConnect(<span class="string">'127.0.0.1'</span>,7496,0);
+</pre><pre class="codeoutput">added interface method: TWSNotification
+notification listener has been added
+Server Version:71
+TWS Time at connection:20141231 11:36:23 EST
+</pre><h2>Request Order Execution Details<a name="2"></a></h2><p>In order to get details about orders placed in Trader Worksstation it is neccessary to auto associate TWS order with the API. Otherwise, only execution details for order placed from the API will be forwarded.</p><pre class="codeinput"><span class="comment">% associate TWS orders with API</span>
+session.eClientSocket.reqAutoOpenOrders(true);
+</pre><p>If there are multiple traders or many many order then will need to filter exec details</p><pre class="codeinput"><span class="comment">% want all the execution entries so init empty filter</span>
+filter = com.ib.client.ExecutionFilter();
+</pre><p>Multiple requests for execution details can be active and are differentiated by the reqId. The request ID is just a unique integer identifier.</p><pre class="codeinput"><span class="comment">% create request id for these execution detials.</span>
+reqId = 0;
+</pre><p>Now, provide request identifier and filter to obtain execution details (default: within last 24 hours)</p><pre class="codeinput"><span class="comment">% request current positions</span>
+session.eClientSocket.reqExecutions(0,filter);
+</pre><h2>Order Placement<a name="7"></a></h2><p>to drive this example will place an order via the API</p><p>First create a generic contract for SPY</p><pre class="codeinput"><span class="comment">% create a stock contract for symbol SPY</span>
+contract = com.tws.ContractFactory.GenericStockContract(<span class="string">'SPY'</span>);
+</pre><p>Next, create limit order associated with your account to BUY 100 shares at some price</p><pre class="codeinput"><span class="comment">% create an order with accnt, side, quantity, and price [*USE YOUR IB PAPER TRADING ACCOUNT NUMBER HERE*]</span>
+order = com.tws.OrderFactory.GenericLimitOrder(<span class="string">'DU207406'</span>, <span class="string">'BUY'</span>, 100, 208.17);
+</pre><p>Finally, place the order using <b>NextOrderId</b> along with the contract and order details above</p><pre class="codeinput"><span class="comment">% place the order with contract and order specifications</span>
+session.eClientSocket.placeOrder(8855,contract,order);  pause(1);
+</pre><h2>Processing Execution Details Events<a name="11"></a></h2><p>Execution details have a lot of information so make sure to read up on the references listed below.</p><p>It is easy to see how many execution details events are in the buffer by calling the size() method. Keep in mind that the buffer is circular with default size of 32. That is, after buffer capacity is exceeded, adding another event will kickout the oldest event to make room for new event.</p><pre class="codeinput">buf.size()
+</pre><pre class="codeoutput">
+ans =
+
+    27
+
+</pre><p>Pull events from the buffer and put into cell array</p><pre class="codeinput"><span class="comment">% create cell array of ExecutionDetails objects</span>
+execEvents = collection2cell(buf);
+</pre><p>Print execution details to command window</p><pre class="codeinput">disp(execEvents{end}.data)
+</pre><pre class="codeoutput">orderId = 8855
+clientId = 0
+conid = 756733
+symbol = SPY
+secType = STK
+expiry = null
+strike = 0.0
+right = null
+multiplier = null
+exchange = IEX
+primaryExch = null
+currency = USD
+localSymbol = SPY
+tradingClass = SPY
+execId = 00018037.54a4090a.01.01
+time = 20141231  11:36:24
+acctNumber = DU207406
+executionExchange = IEX
+side = BOT
+shares = 100
+price = 207.88
+permId = 1012663775
+liquidation = 0
+cumQty = 100
+avgPrice = 207.88
+orderRef = null
+evRule = null
+evMultiplier = 0.0
+
+ 
+</pre><h2>See Also<a name="15"></a></h2><p><a href="matlab:showdemo('TWSNextOrderIdExample')">TWSNextOrderIdExample</a> | <a href="matlab:showdemo('TWSOpenOrdersExample')">TWSOpenOrdersExample</a> | <a href="matlab:showdemo('TWSPositionsExample')">TWSPositionsExample</a></p><h2>References<a name="16"></a></h2><p>Interactive Brokers API:</p><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/econnect.htm">eConnect</a></li></ul></div><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/reqexecutions.htm">EClientSocket:reqExecutions</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/contractdetails.htm">EWrapper:contractDetails</a></li></ul></div><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/placeorder.htm">EClientSocket:placeOrder</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/cancelorder.htm">EClientSocket:cancelOrder</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/reqglobalcancel.htm">EClientSocket:reqGlobalCancel</a></li></ul></div><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/reqids.htm">EClientSocket:reqIDs</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/nextvalidid.htm">EWrapper:NextValidId</a></li></ul></div><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/reqautoopenorders.htm">EClientSocket:reqAutoOpenOrders</a></li></ul></div><p>TWS@Github:</p><div><ul><li><a href="https://github.com/softwarespartan/TWS/blob/master/src/com/tws/ExecutionDetails.java">com.tws.ExecutionDetails</a></li></ul></div><p>Apache Commons:</p><div><ul><li><a href="https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html">CircularFifoBuffer</a></li></ul></div><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Execution Details
+%
+% *DISCLAIMER / WARNING*
+%
+% Just a heads up, this example will attempt to place an order automatically via the IB API.  
+% Please, *use your paper trading account* details when exploring this example.
+%
+% See Interactive Brokers <https://www.interactivebrokers.com/en/index.php?f=tws&p=papertrader paper trading page> for additional details
+%
+
+%% Initialize session with Trader Workstation
+%
+
+% initialize session with TWS
+session = TWS.Session.getInstance();
+
+% create local buffer for exec details events 
+[buf,lh] = TWS.initBufferForEvent(TWS.Events.EXECUTIONDETAILS);
+
+% connect to TWS
+session.eClientSocket.eConnect('127.0.0.1',7496,0);
+
+%% Request Order Execution Details
+
+%% 
+% In order to get details about orders placed in Trader Worksstation
+% it is neccessary to auto associate TWS order with the API.
+% Otherwise, only execution details for order placed from the API will be forwarded.
+
+% associate TWS orders with API
+session.eClientSocket.reqAutoOpenOrders(true);
+
+%%
+% If there are multiple traders or many many order then will need to filter exec details
+
+% want all the execution entries so init empty filter
+filter = com.ib.client.ExecutionFilter();
+
+
+%%
+% Multiple requests for execution details can be active and are differentiated by the reqId.  
+% The request ID is just a unique integer identifier.
+
+% create request id for these execution detials.  
+reqId = 0;
+
+%% 
+% Now, provide request identifier and filter to obtain execution details (default: within last 24 hours)
+
+% request current positions
+session.eClientSocket.reqExecutions(0,filter);
+
+%% Order Placement
+% to drive this example will place an order via the API
+
+%%
+% First create a generic contract for SPY
+
+% create a stock contract for symbol SPY
+contract = com.tws.ContractFactory.GenericStockContract('SPY');
+
+%%
+% Next, create limit order associated with your account to BUY 100 shares at some price
+
+% create an order with accnt, side, quantity, and price [*USE YOUR IB PAPER TRADING ACCOUNT NUMBER HERE*]
+order = com.tws.OrderFactory.GenericLimitOrder('DU207406', 'BUY', 100, 208.17);
+
+%%
+% Finally, place the order using *NextOrderId* along with the contract and order details above 
+
+% place the order with contract and order specifications
+session.eClientSocket.placeOrder(8855,contract,order);  pause(1);
+
+%% Processing Execution Details Events
+% Execution details have a lot of information so make sure to read up on the references listed below.
+
+%%
+% It is easy to see how many execution details events are in the buffer by calling the size() method.  
+% Keep in mind that the buffer is circular with default size of 32.  
+% That is, after buffer capacity is exceeded, adding another event will kickout the oldest event to make room for new event.
+buf.size()
+
+%%
+% Pull events from the buffer and put into cell array
+
+% create cell array of ExecutionDetails objects
+execEvents = collection2cell(buf);
+
+%%
+% Print execution details to command window
+disp(execEvents{end}.data)
+
+%% See Also
+% <matlab:showdemo('TWSNextOrderIdExample') TWSNextOrderIdExample> | <matlab:showdemo('TWSOpenOrdersExample') TWSOpenOrdersExample> | <matlab:showdemo('TWSPositionsExample') TWSPositionsExample>
+
+%% References
+% Interactive Brokers API: 
+%
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/econnect.htm eConnect>
+%
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqexecutions.htm EClientSocket:reqExecutions>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/contractdetails.htm EWrapper:contractDetails>
+%
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/placeorder.htm EClientSocket:placeOrder>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/cancelorder.htm EClientSocket:cancelOrder>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqglobalcancel.htm EClientSocket:reqGlobalCancel>
+%
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqids.htm EClientSocket:reqIDs>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/nextvalidid.htm EWrapper:NextValidId>
+%
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqautoopenorders.htm EClientSocket:reqAutoOpenOrders>
+% 
+% TWS@Github:
+%
+% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/ExecutionDetails.java com.tws.ExecutionDetails>
+%
+% Apache Commons:
+%
+% * <https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html CircularFifoBuffer>
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,221 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>TWSAccountUpdatesExample</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-12-31"><meta name="DC.source" content="TWSAccountUpdatesExample.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1></h1><!--introduction--><p>For more information, see the official site: <a href="https://github.com/softwarespartan">github.io</a></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Initialize session with Trader Workstation</a></li><li><a href="#2">Request Account Updates</a></li><li><a href="#4">Process account update events</a></li><li><a href="#5">References</a></li></ul></div><h2>Initialize session with Trader Workstation<a name="1"></a></h2><p>Note here that the IB API associates 3 callbacks with reqAccountUpdates()</p><div><ul><li>updateAccountValue()</li><li>updateAccountTime()</li><li>updatePortfolio()</li></ul></div><p>However, TWS.Events.ACCOUNTUPDATES is linked <b>only</b> to updateAccountValue().</p><p>For events associated with updatePortfolio() see <a href="matlab:showdemo('TWSPortfolioUpdateExample')">TWSPortfolioUpdateExample</a>.</p><pre class="codeinput"><span class="comment">% initialize session with TWS</span>
+session = TWS.Session.getInstance();
+
+<span class="comment">% create local buffer for account summary events</span>
+[buf,lh] = TWS.initBufferForEvent(TWS.Events.ACCOUNTUPDATE);
+
+<span class="comment">% connect to TWS</span>
+session.eClientSocket.eConnect(<span class="string">'127.0.0.1'</span>,7496,0);
+</pre><pre class="codeoutput">added interface method: TWSNotification
+notification listener has been added
+Server Version:71
+TWS Time at connection:20141231 10:27:19 EST
+</pre><h2>Request Account Updates<a name="2"></a></h2><pre class="codeinput"><span class="comment">% request account updates [USE YOUR ACCOUNT NUMBER HERE INSTEAD]</span>
+session.eClientSocket.reqAccountUpdates(true,<span class="string">'DU207406'</span>); pause(0.5)
+</pre><p>AccountUpdate(s) are published as individual/separate events Here, for accountUpdate subscription, AccountAttributes are published as individual/separate events. This is in contrast to AccountSummary event where AccountAttributes are aggregated into a single event (i.e. event.data = HashSet&lt;AcountAttributes&gt;). Trader Workstation pushes all attributes when subscription is started but individually there after.</p><pre class="codeinput">buf.size()
+</pre><pre class="codeoutput">
+ans =
+
+    32
+
+</pre><h2>Process account update events<a name="4"></a></h2><p>For simplicity, just print out each event in the buffer to the command window. See link to IB API updateAccountValue in Reference section for more information about account attributes</p><pre class="codeinput">cellfun(@(e)disp(e.data),collection2cell(buf));
+</pre><pre class="codeoutput">DU207406 PostExpirationMargin 0.00 USD
+ 
+DU207406 PostExpirationMargin-C 0.00 USD
+ 
+DU207406 PostExpirationMargin-S 0.00 USD
+ 
+DU207406 PreviousDayEquityWithLoanValue 1003796.95 USD
+ 
+DU207406 PreviousDayEquityWithLoanValue-S 1003796.95 USD
+ 
+DU207406 RealizedPnL -187 BASE
+ 
+DU207406 RealizedPnL -187 USD
+ 
+DU207406 RegTEquity 1003076.78 USD
+ 
+DU207406 RegTEquity-S 1003076.78 USD
+ 
+DU207406 RegTMargin 13305.00 USD
+ 
+DU207406 RegTMargin-S 13305.00 USD
+ 
+DU207406 SMA 990035.78 USD
+ 
+DU207406 SMA-S 990035.78 USD
+ 
+DU207406 SegmentTitle-C US Commodities null
+ 
+DU207406 SegmentTitle-S US Securities null
+ 
+DU207406 StockMarketValue 26610 BASE
+ 
+DU207406 StockMarketValue 26610 USD
+ 
+DU207406 TBillValue 0 BASE
+ 
+DU207406 TBillValue 0 USD
+ 
+DU207406 TBondValue 0 BASE
+ 
+DU207406 TBondValue 0 USD
+ 
+DU207406 TotalCashBalance 976467 BASE
+ 
+DU207406 TotalCashBalance 976467 USD
+ 
+DU207406 TotalCashValue 976466.78 USD
+ 
+DU207406 TotalCashValue-C 0.00 USD
+ 
+DU207406 TotalCashValue-S 976466.78 USD
+ 
+DU207406 TradingType-S STKNOPT null
+ 
+DU207406 UnrealizedPnL -533 BASE
+ 
+DU207406 UnrealizedPnL -533 USD
+ 
+DU207406 WarrantValue 0 BASE
+ 
+DU207406 WarrantValue 0 USD
+ 
+DU207406 WhatIfPMEnabled true null
+ 
+</pre><h2>References<a name="5"></a></h2><p>Interactive Brokers API:</p><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/econnect.htm">eConnect</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/reqaccountupdates.htm">EClientSocket:reqAccountUpdates</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/updateaccountvalue.htm">EWrapper:updateAccountValue</a></li></ul></div><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/updateportfolio.htm">EWrapper:updatePortfolio</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/updateaccounttime.htm">EWrapper:updateAccountTime</a></li></ul></div><p>TWS@Github:</p><div><ul><li><a href="https://github.com/softwarespartan/TWS/blob/master/src/com/tws/AccountAttribute.java">AccountAttributes</a></li></ul></div><p>Apache Commons:</p><div><ul><li><a href="https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html">CircularFifoBuffer</a></li></ul></div><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%%
+% For more information, see the official site:
+% <https://github.com/softwarespartan github.io>
+
+
+%% Initialize session with Trader Workstation
+%
+% Note here that the IB API associates 3 callbacks with reqAccountUpdates()
+%
+% * updateAccountValue()
+% * updateAccountTime()
+% * updatePortfolio()
+%
+% However, TWS.Events.ACCOUNTUPDATES is linked *only* to updateAccountValue(). 
+%
+% For events associated with updatePortfolio() see <matlab:showdemo('TWSPortfolioUpdateExample') TWSPortfolioUpdateExample>.
+%
+
+% initialize session with TWS
+session = TWS.Session.getInstance();
+
+% create local buffer for account summary events 
+[buf,lh] = TWS.initBufferForEvent(TWS.Events.ACCOUNTUPDATE);
+
+% connect to TWS
+session.eClientSocket.eConnect('127.0.0.1',7496,0);
+
+%% Request Account Updates
+
+% request account updates [USE YOUR ACCOUNT NUMBER HERE INSTEAD]
+session.eClientSocket.reqAccountUpdates(true,'DU207406'); pause(0.5)
+
+%% 
+% AccountUpdate(s) are published as individual/separate events
+% Here, for accountUpdate subscription, AccountAttributes are published as individual/separate 
+% events. This is in contrast to AccountSummary event where AccountAttributes are aggregated
+% into a single event (i.e. event.data = HashSet<AcountAttributes>).
+% Trader Workstation pushes all attributes when subscription is started but individually there after.
+buf.size()
+
+%% Process account update events
+%
+% For simplicity, just print out each event in the buffer to the command window.
+% See link to IB API updateAccountValue in Reference section for more information about account attributes 
+cellfun(@(e)disp(e.data),collection2cell(buf));
+
+%% References
+% Interactive Brokers API: 
+%
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/econnect.htm eConnect>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqaccountupdates.htm EClientSocket:reqAccountUpdates>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/updateaccountvalue.htm EWrapper:updateAccountValue>
+%
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/updateportfolio.htm EWrapper:updatePortfolio>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/updateaccounttime.htm EWrapper:updateAccountTime>
+% 
+% TWS@Github:
+%
+% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/AccountAttribute.java AccountAttributes>
+%
+% Apache Commons:
+%
+% * <https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html CircularFifoBuffer>
+%
+##### SOURCE END #####
+--></body></html>

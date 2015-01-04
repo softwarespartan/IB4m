@@ -1,0 +1,233 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>HistoricalDataExample</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-12-31"><meta name="DC.source" content="TWSHistoricalDataExample.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1></h1><!--introduction--><p>For more information, see the official site: <a href="https://github.com/softwarespartan">github.io</a></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Initialize session with Trader Workstation</a></li><li><a href="#2">Requesting historical data from IB/TWS</a></li><li><a href="#3">Process historical data event</a></li><li><a href="#14">See Also</a></li><li><a href="#15">References</a></li></ul></div><h2>Initialize session with Trader Workstation<a name="1"></a></h2><pre class="codeinput"><span class="comment">% initialize session with TWS</span>
+session = TWS.Session.getInstance();
+
+<span class="comment">% create local buffer for historical data events</span>
+[buf,lh] = TWS.initBufferForEvent(TWS.Events.HISTORICALDATA);
+
+<span class="comment">% connect to TWS</span>
+session.eClientSocket.eConnect(<span class="string">'127.0.0.1'</span>,7496,0);
+</pre><pre class="codeoutput">added interface method: TWSNotification
+notification listener has been added
+Server Version:71
+TWS Time at connection:20141231 09:54:40 EST
+</pre><h2>Requesting historical data from IB/TWS<a name="2"></a></h2><pre class="codeinput"><span class="comment">% create an empty stock contract</span>
+contract = com.tws.ContractFactory.GenericStockContract(<span class="string">'FB'</span>);
+
+<span class="comment">% request historical data for our contract for a year w/ 1-day bars</span>
+session.eClientSocket.reqHistoricalData(1000001,contract,<span class="string">'20141230 16:00:00'</span>,<span class="string">'1 Y'</span>,<span class="string">'1 day'</span>,<span class="string">'TRADES'</span>,1,1,[]); pause(0.5);
+</pre><h2>Process historical data event<a name="3"></a></h2><p>Under the hood, Trader Workstation returns one bar at a time.  That is, EWrapper:historicalData() is called once for each bar.  Each bar associated with the request ID, 1000001 in this case, is aggregated into a single event (i.e. event.data = HashSet&lt;com.tws.Bar&gt;)</p><p>Retreive the historical data event from the buffer</p><pre class="codeinput">hde = buf.get();
+</pre><p>Convert the HashSet&lt;Bar&gt; into more native cell array of bars</p><pre class="codeinput">bars = collection2cell(hde.data);
+</pre><p>Figure out how many bars were returned</p><pre class="codeinput">numel(bars)
+</pre><pre class="codeoutput">
+ans =
+
+   252
+
+</pre><p>but could also call size() method on event.data directly without cell conversion</p><pre class="codeinput">numel(bars) == hde.data.size()
+</pre><pre class="codeoutput">
+ans =
+
+     1
+
+</pre><p>Print out bars to the screen</p><pre class="codeinput"><span class="keyword">for</span> i = 1:min(numel(bars),10); disp(bars{i}); <span class="keyword">end</span>
+</pre><pre class="codeoutput">1000001 20141107 12:00:00     75.39     75.86     75.02     75.60 177169 80295
+ 
+1000001 20140102 12:00:00     54.83     55.22     54.19     54.71 428839 159633
+ 
+1000001 20140228 12:00:00     69.31     69.88     67.38     68.46 593817 210923
+ 
+1000001 20140724 12:00:00     76.00     76.74     74.51     74.98 1055827 373253
+ 
+1000001 20141024 12:00:00     80.10     80.76     79.32     80.67 272171 122810
+ 
+1000001 20141208 12:00:00     76.18     77.25     75.40     76.52 230905 108425
+ 
+1000001 20140227 12:00:00     69.34     70.01     68.87     68.94 377375 142062
+ 
+1000001 20140415 12:00:00     59.29     59.68     55.88     59.09 1032015 348145
+ 
+1000001 20141027 12:00:00     80.74     80.80     79.76     80.28 252252 116477
+ 
+1000001 20141229 12:00:00     80.56     80.96     79.71     80.02 124733 61079
+ 
+</pre><p>Extract close and volume info from each bar</p><pre class="codeinput">close = cellfun(@(b)b.close,bars);  vol = cellfun(@(b)b.volume,bars);
+</pre><p>Convert the string time of the bars to matlab datenum</p><pre class="codeinput">dt = datenum(cellfun(@(b)char(b.dtstr),bars,<span class="string">'UniformOutput'</span>,false),<span class="string">'yyyymmdd HH:MM:SS'</span>);
+</pre><p>The bars might not be in order once extracted from the HashSet</p><pre class="codeinput">[~,indx] = sort(dt);
+</pre><p>Now, finally, plot the data</p><pre class="codeinput">subplot(5,1,1:3); plot(dt(indx),close(indx),<span class="string">'Marker'</span>,<span class="string">'.'</span>); xlim([min(dt),max(dt)]); datetick; grid <span class="string">on</span>; ylabel(<span class="string">'close'</span> );
+subplot(5,1,4:5); bar (dt(indx),vol  (indx)             ); xlim([min(dt),max(dt)]); datetick; grid <span class="string">on</span>; ylabel(<span class="string">'volume'</span>);
+</pre><img vspace="5" hspace="5" src=" HistoricalDataExample_01.png" alt=""> <p>From here, it is easy to move on to candel plots and other technical indicators etc.</p><h2>See Also<a name="14"></a></h2><p><a href="matlab:candle">candle</a> | <a href="matlab:highlow">highlow</a> | <a href="matlab:bolling">bolling</a> | <a href="matlab:movavg">movavg</a></p><h2>References<a name="15"></a></h2><p>Mathworks Financial Toolbox:</p><div><ul><li><a href="http://www.mathworks.com/help/finance/chart-technical-indicators.html">Technical Indicators</a></li></ul></div><p>Matlab File Exchange:</p><div><ul><li><a href="http://www.mathworks.com/matlabcentral/fileexchange/33430-technical-indicators">Technical Indicators</a></li></ul></div><p>Interactive Brokers API:</p><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/econnect.htm">eConnect</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/reqhistoricaldata.htm">EClientSocket:reqHistoricalData</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/historicaldata.htm">EWrapper:historicalData</a></li></ul></div><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/tables/historical_data_limitations.htm">Historical Data Limitations</a></li></ul></div><p>TWS@Github:</p><div><ul><li><a href="https://github.com/softwarespartan/TWS/blob/master/src/com/tws/Bar.java">com.tws.Bar</a></li></ul></div><p>Apache Commons:</p><div><ul><li><a href="https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html">CircularFifoBuffer</a></li></ul></div><p>Java Docs:</p><div><ul><li><a href="http://docs.oracle.com/javase/8/docs/api/java/util/HashSet.html">HashSet</a></li></ul></div><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%%
+% For more information, see the official site:
+% <https://github.com/softwarespartan github.io>
+
+%% Initialize session with Trader Workstation
+
+% initialize session with TWS
+session = TWS.Session.getInstance();
+
+% create local buffer for historical data events 
+[buf,lh] = TWS.initBufferForEvent(TWS.Events.HISTORICALDATA);
+
+% connect to TWS
+session.eClientSocket.eConnect('127.0.0.1',7496,0);
+
+%% Requesting historical data from IB/TWS
+
+% create an empty stock contract
+contract = com.tws.ContractFactory.GenericStockContract('FB');
+
+% request historical data for our contract for a year w/ 1-day bars
+session.eClientSocket.reqHistoricalData(1000001,contract,'20141230 16:00:00','1 Y','1 day','TRADES',1,1,[]); pause(0.5);
+
+%% Process historical data event
+%
+% Under the hood, Trader Workstation returns one bar at a time.  That is, EWrapper:historicalData() is
+% called once for each bar.  Each bar associated with the request ID, 1000001 in this case, is aggregated
+% into a single event (i.e. event.data = HashSet<com.tws.Bar>)
+
+%% 
+% Retreive the historical data event from the buffer
+hde = buf.get();
+
+%% 
+% Convert the HashSet<Bar> into more native cell array of bars
+bars = collection2cell(hde.data);
+
+%%
+% Figure out how many bars were returned
+numel(bars)
+
+%% 
+% but could also call size() method on event.data directly without cell conversion
+numel(bars) == hde.data.size()
+
+%%
+% Print out bars to the screen
+for i = 1:min(numel(bars),10); disp(bars{i}); end
+
+%%
+% Extract close and volume info from each bar
+close = cellfun(@(b)b.close,bars);  vol = cellfun(@(b)b.volume,bars);
+
+%% 
+% Convert the string time of the bars to matlab datenum
+dt = datenum(cellfun(@(b)char(b.dtstr),bars,'UniformOutput',false),'yyyymmdd HH:MM:SS');
+
+%%
+% The bars might not be in order once extracted from the HashSet
+[~,indx] = sort(dt);
+
+%%
+% Now, finally, plot the data
+subplot(5,1,1:3); plot(dt(indx),close(indx),'Marker','.'); xlim([min(dt),max(dt)]); datetick; grid on; ylabel('close' );
+subplot(5,1,4:5); bar (dt(indx),vol  (indx)             ); xlim([min(dt),max(dt)]); datetick; grid on; ylabel('volume');
+
+%%
+% From here, it is easy to move on to candel plots and other technical indicators etc.
+
+%% See Also
+%
+% <matlab:candle candle> | <matlab:highlow highlow> | <matlab:bolling bolling> | <matlab:movavg movavg> 
+%
+
+%% References
+%
+% Mathworks Financial Toolbox:
+%
+% * <http://www.mathworks.com/help/finance/chart-technical-indicators.html Technical Indicators>
+%
+% Matlab File Exchange:
+%
+% * <http://www.mathworks.com/matlabcentral/fileexchange/33430-technical-indicators Technical Indicators>
+%
+% Interactive Brokers API: 
+%
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/econnect.htm eConnect>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqhistoricaldata.htm EClientSocket:reqHistoricalData>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/historicaldata.htm EWrapper:historicalData>
+%
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/tables/historical_data_limitations.htm Historical Data Limitations>
+% 
+% TWS@Github:
+%
+% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/Bar.java com.tws.Bar>
+%
+% Apache Commons:
+%
+% * <https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html CircularFifoBuffer>
+%
+% Java Docs:
+%
+% * <http://docs.oracle.com/javase/8/docs/api/java/util/HashSet.html HashSet>
+%
+##### SOURCE END #####
+--></body></html>

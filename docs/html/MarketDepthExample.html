@@ -1,0 +1,317 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Market Depth (Level II)</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-12-31"><meta name="DC.source" content="TWSMarketDepthExample.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Market Depth (Level II)</h1><!--introduction--><p>Typically before a call for to subscribe to market data a request for contract details is made to obtain a list of valid exchanges.</p><p>Note that not all exchanges will provide level II data. Generally, only ARCA, BATS, ISLAND, BEX provide market depth.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Initialize session with Trader Workstation</a></li><li><a href="#3">Request level II market data for SPY</a></li><li><a href="#11">Processing Market Depth Events (Part 1)</a></li><li><a href="#18">Processing Market Depth Events (Part 2)</a></li><li><a href="#23">See Also</a></li><li><a href="#24">References</a></li></ul></div><h2>Initialize session with Trader Workstation<a name="1"></a></h2><pre class="codeinput"><span class="comment">% initialize session with TWS</span>
+session = TWS.Session.getInstance();
+
+<span class="comment">% create local buffer for market depth events with size 10,000 (default size is 32)</span>
+[buf,lh] = TWS.initBufferForEvent(TWS.Events.MARKETDEPTH,10000);
+
+<span class="comment">% create a callback to print error messages to the command window</span>
+lherr  = event.listener(                         <span class="keyword">...</span>
+                        TWS.Events.getInstance  ,<span class="keyword">...</span>
+                        TWS.Events.ERROR        ,<span class="keyword">...</span>
+                        @(s,e)disp(e.event.data) <span class="keyword">...</span>
+                       );
+
+<span class="comment">% connect to Trader Workstation</span>
+session.eClientSocket.eConnect(<span class="string">'127.0.0.1'</span>,7496,0);
+</pre><pre class="codeoutput">added interface method: TWSNotification
+notification listener has been added
+Server Version:71
+TWS Time at connection:20141231 18:51:52 EST
+</pre><p>A callback to print out error message to the command window is particularly useful here. There are many possible errors associated with requesting Market Depth in general and in particular the specified contract/exchange might not privide the requested data.</p><p>The error message for symbol/type/exchagne mismatch typically looks like: <i>0 10092 Deep market data is not supported for this combination of security type/exchange</i></p><h2>Request level II market data for SPY<a name="3"></a></h2><p>Requesting L2 data is straight forward require only unique request ID, contract, and depth Note that accessing level II data requires activation within your Interactive Brokers Market Data Feed. See Interactive Brokers <a href="https://www.interactivebrokers.com/en/index.php?f=marketData&amp;p=mdata">market data feed page</a> for additional information.</p><p>First create a generic contract for SPY</p><pre class="codeinput"><span class="comment">% create a stock contract for symbol SPY</span>
+contract = com.tws.ContractFactory.GenericStockContract(<span class="string">'SPY'</span>);
+</pre><p>As mentioned above, not all exchanges offer market depth so care must be taken to specify the exact exchange for which to obtain data.</p><p>For example, the default exchange for a GenericStockContract is "SMART" which will not work for market data requests. Therefore must set the exchange explicitly here.</p><pre class="codeinput"><span class="comment">% set the exchange for which to obtain market depth</span>
+contract.m_exchange = <span class="string">'ISLAND'</span>;  contract.m_primaryExch = <span class="string">'ISLAND'</span>;
+</pre><p>The request ID is simply any positive integer as long as it is unique at the time the request is placed</p><pre class="codeinput"><span class="comment">% a unique integer identifier for this data request</span>
+reqId = 0;
+</pre><p>Next specify the number of rows of market depth to return</p><pre class="codeinput"><span class="comment">% specify the depth of the market data returned</span>
+numRows = 10;
+</pre><p>Finally, request level II market data</p><pre class="codeinput"><span class="comment">% request numRows of market depth for specified contract.</span>
+session.eClientSocket.reqMktDepth(reqId,contract,numRows,[]);
+</pre><p>In the event your request ID is not unique you can expect an error event/message which looks like: <i>0 322 Error processing request:-'wd' : cause - Duplicate ticker id</i></p><p>To cancel market data subscription simply call session.eClientSocket.cancelMktDepth(0) with the associated request ID you wish to cancel.  For this example the request ID is 0.</p><p>If an attempt is made to cancel a market depth request for a nonexistent reqID an error event/message will be produced: <i>0 310 Can't find the subscribed market depth with tickerId:0</i></p><h2>Processing Market Depth Events (Part 1)<a name="11"></a></h2><p>Market depth requests will produce a very large amount of data (100 or even 1000 events per second) during regular trading hours.  Keep in mind that the buffer initialized above is circular and once full will remove the oldest events to make room for new events.</p><p>After a few second the buffer will contain many market depth events.  To check the number of events in the buffer call the size() method.</p><pre class="codeinput">pause(5); buf.size()
+</pre><pre class="codeoutput">
+ans =
+
+    20
+
+</pre><p>The number of simultanious market depth subscriptions active is limited by Interactive Brokers to something like 3 to 5 at at any one time. Therefore, if multiple market depth subscriptions are active, it is important to check the request id associated with the event.</p><pre class="codeinput"><span class="comment">% get the reqId associated with a market depth event</span>
+buf.get().data.reqId
+</pre><pre class="codeoutput">
+ans =
+
+     0
+
+</pre><p>Note here that the buf is a FIFO buffer such that <i>buf.get()</i> returns the least recently added (i.e. oldest) event from the event buffer.</p><p>Pull out events from the buffer to cell array</p><pre class="codeinput"><span class="comment">% create cell array of market depth events</span>
+events = collection2cell(buf);
+</pre><p>Since there are likely many events only print more recent ones to the command window</p><pre class="codeinput"><span class="keyword">for</span> i = 1:10; disp(events{end-10+i}.data); <span class="keyword">end</span>
+</pre><pre class="codeoutput">0 0 NSDQ 0 0 205.69 3
+ 
+0 1 NSDQ 0 0 205.75 1
+ 
+0 2 NSDQ 0 0 205.77 1
+ 
+0 3 NSDQ 0 0 205.8 1
+ 
+0 4 NSDQ 0 0 205.84 2
+ 
+0 5 NSDQ 0 0 205.88 1
+ 
+0 6 NSDQ 0 0 205.9 11
+ 
+0 7 NSDQ 0 0 205.94 5
+ 
+0 8 NSDQ 0 0 206.12 500
+ 
+0 9 NSDQ 0 0 206.83 500
+ 
+</pre><p>The format here is {reqID} {row} {marketmaker} {operation} {side} {price} {size} where size has units of 100 shares. That is, size = 1 means 100 shares and so on.  Check out the references below for full details.</p><h2>Processing Market Depth Events (Part 2)<a name="18"></a></h2><p>With mktDepth subscriptions it is important to note that there are two callbacks associated with EClientSocket::reqMktDepth</p><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/updatemktdepth.htm">updateMktDepth</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/updatemktdepthl2.htm">udpateMktDepthL2</a></li></ul></div><p>which can be a little confusing at first.  When specifying an echange where multiple market makers are active the market maker must be identified explicitly using the <i>updateMktDepthL2</i> callback. Currently, only ISLAND exchange has multiple active market makers, namely itself (ISLAND) and NASDAQ (NSDQ).  Otherwise all market depth information is fed through the <i>updateMktDepth</i> callback where the marketMaker is defined by the contract provided in the reqMktDepth call.</p><p>For example, if the contract exchange is specified as</p><pre class="codeinput">contract.m_exchange = <span class="string">'ARCA'</span>;  contract.m_primaryExch = <span class="string">'ARCA'</span>;
+</pre><p>then market depth information is provided by the <i>updateMktDepth</i> callback and would show up something like</p><p><i>0 4 null 0 0 205.69 9</i></p><p>where there is a "null" since the market maker (ARCA) is "implied" as ARCA is the only market maker on the ARCA exchange.</p><p>Therefore additional book keeping is required to match/map market depth reqID to an appropriate market maker string. This can be accomplished using MATLAB's built-in containers.Map or java.util.HashMap.</p><p>A java HashMap can be initialized as</p><pre class="codeinput">map = java.util.HashMap();
+</pre><p>For each market depth request/subscription make an entry in the map to keep track of which reqId goes with which exchange</p><pre class="codeinput">map.put(reqId,contract.m_exchange);
+</pre><p>and translate back each event as</p><pre class="codeinput">map.get(buf.get().data.reqId)
+</pre><pre class="codeoutput">
+ans =
+
+ARCA
+
+</pre><h2>See Also<a name="23"></a></h2><p><a href="matlab:showdemo('TWSMarketDataExample')">TWSMarketDataExample</a> | <a href="matlab:showdemo('TWSContractDetails')">TWSContractDetails</a></p><h2>References<a name="24"></a></h2><p>Interactive Brokers API:</p><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/reqmktdepth.htm">EClientSocket::reqMktData</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/updatemktdepth.htm">EWrapper::updateMktDepth</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/updatemktdepthl2.htm">EWrapper::updateMktDepthL2</a></li></ul></div><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/contract.htm">com.ib.client.Contract</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/tables/api_message_codes.htm">API Error Codes</a></li></ul></div><p>TWS@Github:</p><div><ul><li><a href="https://github.com/softwarespartan/TWS/blob/master/src/com/tws/MarketDepth.java">com.tws.MarketDepth</a></li></ul></div><p>Apache Commons:</p><div><ul><li><a href="https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html">CircularFifoBuffer</a></li></ul></div><p>Oracle:</p><div><ul><li><a href="http://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html">HashMap</a></li></ul></div><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Market Depth (Level II)
+%
+% Typically before a call for to subscribe to market data a request for 
+% contract details is made to obtain a list of valid exchanges.
+%
+% Note that not all exchanges will provide level II data.
+% Generally, only ARCA, BATS, ISLAND, BEX provide market depth.
+
+%% Initialize session with Trader Workstation
+
+% initialize session with TWS
+session = TWS.Session.getInstance();
+
+% create local buffer for market depth events with size 10,000 (default size is 32)
+[buf,lh] = TWS.initBufferForEvent(TWS.Events.MARKETDEPTH,10000);
+
+% create a callback to print error messages to the command window
+lherr  = event.listener(                         ...
+                        TWS.Events.getInstance  ,...
+                        TWS.Events.ERROR        ,...
+                        @(s,e)disp(e.event.data) ...
+                       );
+
+% connect to Trader Workstation
+session.eClientSocket.eConnect('127.0.0.1',7496,0);
+
+%%
+% A callback to print out error message to the command window is particularly useful here. There are many possible errors associated with requesting Market Depth in general and in particular the specified contract/exchange might not privide the requested data.
+%
+% The error message for symbol/type/exchagne mismatch typically looks like:
+% _0 10092 Deep market data is not supported for this combination of security type/exchange_
+%
+
+%% Request level II market data for SPY
+% Requesting L2 data is straight forward require only unique request ID, contract, and depth
+% Note that accessing level II data requires activation within your Interactive Brokers Market Data Feed.
+% See Interactive Brokers 
+% <https://www.interactivebrokers.com/en/index.php?f=marketData&p=mdata market data feed page> for additional information.
+
+%%
+% First create a generic contract for SPY
+
+% create a stock contract for symbol SPY
+contract = com.tws.ContractFactory.GenericStockContract('SPY');
+
+%% 
+% As mentioned above, not all exchanges offer market depth so care must be taken to specify the exact exchange for which to obtain data.
+%
+% For example, the default exchange for a GenericStockContract is "SMART" which will not work for market data requests.
+% Therefore must set the exchange explicitly here.
+
+% set the exchange for which to obtain market depth
+contract.m_exchange = 'ISLAND';  contract.m_primaryExch = 'ISLAND';
+
+%%
+% The request ID is simply any positive integer as long as it is unique at the time the request is placed
+
+% a unique integer identifier for this data request
+reqId = 0;
+
+%%
+% Next specify the number of rows of market depth to return
+
+% specify the depth of the market data returned
+numRows = 10;
+
+%%
+% Finally, request level II market data
+
+% request numRows of market depth for specified contract.   
+session.eClientSocket.reqMktDepth(reqId,contract,numRows,[]);
+
+%%
+% In the event your request ID is not unique you can expect an error event/message which looks like: _0 322 Error processing request:-'wd' : cause - Duplicate ticker id_
+
+%% 
+% To cancel market data subscription simply call session.eClientSocket.cancelMktDepth(0) 
+% with the associated request ID you wish to cancel.  For this example the request ID is 0.
+%
+% If an attempt is made to cancel a market depth request for a nonexistent reqID an error event/message will be produced: _0 310 Can't find the subscribed market depth with tickerId:0_
+
+%% Processing Market Depth Events (Part 1)
+% Market depth requests will produce a very large amount of data (100 or even 1000 events per second) during regular trading hours.  Keep in mind that the buffer initialized above is circular and once full will remove the oldest events to make room for new events.
+
+%% 
+% After a few second the buffer will contain many market depth events.  To check the number of events in the buffer call the size() method.
+pause(5); buf.size()
+
+%%
+% The number of simultanious market depth subscriptions active is limited by Interactive Brokers to something like 3 to 5 at at any one time.
+% Therefore, if multiple market depth subscriptions are active, it is important to check the request id associated with the event.  
+
+% get the reqId associated with a market depth event
+buf.get().data.reqId
+
+%% 
+% Note here that the buf is a FIFO buffer such that _buf.get()_ returns the least recently added (i.e. oldest) event from the event buffer. 
+
+%%
+% Pull out events from the buffer to cell array
+
+% create cell array of market depth events
+events = collection2cell(buf);
+
+%%
+% Since there are likely many events only print more recent ones to the command window
+for i = 1:10; disp(events{end-10+i}.data); end
+%%
+% The format here is {reqID} {row} {marketmaker} {operation} {side} {price} {size} where size has units of 100 shares. That is, size = 1 means 100 shares and so on.  Check out the references below for full details.
+
+%% Processing Market Depth Events (Part 2)
+% With mktDepth subscriptions it is important to note that there are two callbacks associated with EClientSocket::reqMktDepth
+%
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/updatemktdepth.htm updateMktDepth>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/updatemktdepthl2.htm udpateMktDepthL2>
+%
+% which can be a little confusing at first.  When specifying an echange where multiple market makers are active the market maker must be identified explicitly using the _updateMktDepthL2_ callback.
+% Currently, only ISLAND exchange has multiple active market makers, namely itself (ISLAND) and NASDAQ (NSDQ).  Otherwise all market depth information is fed through the _updateMktDepth_ callback where the marketMaker is defined by the contract provided in the reqMktDepth call.
+%
+% For example, if the contract exchange is specified as 
+
+contract.m_exchange = 'ARCA';  contract.m_primaryExch = 'ARCA';
+
+%%
+% then market depth information is provided by the _updateMktDepth_ callback and would show up something like
+%
+% _0 4 null 0 0 205.69 9_ 
+%
+% where there is a "null" since the market maker (ARCA) is "implied" as ARCA is the only market maker on the ARCA exchange.
+%
+% Therefore additional book keeping is required to match/map market depth reqID to an appropriate market maker string.
+% This can be accomplished using MATLAB's built-in containers.Map or java.util.HashMap.  
+
+%%
+% A java HashMap can be initialized as
+map = java.util.HashMap();
+
+%%
+% For each market depth request/subscription make an entry in the map to keep track of which reqId goes with which exchange
+map.put(reqId,contract.m_exchange);
+
+%%
+% and translate back each event as 
+map.get(buf.get().data.reqId)
+
+%% See Also
+% <matlab:showdemo('TWSMarketDataExample') TWSMarketDataExample> | <matlab:showdemo('TWSContractDetails') TWSContractDetails>
+
+%% References
+%
+% Interactive Brokers API: 
+%
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqmktdepth.htm EClientSocket::reqMktData>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/updatemktdepth.htm EWrapper::updateMktDepth>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/updatemktdepthl2.htm EWrapper::updateMktDepthL2>
+% 
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/contract.htm com.ib.client.Contract>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/tables/api_message_codes.htm API Error Codes>
+%
+% TWS@Github:
+%
+% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/MarketDepth.java com.tws.MarketDepth>
+%
+% Apache Commons:
+%
+% * <https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html CircularFifoBuffer>
+%
+% Oracle:
+%
+% * <http://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html HashMap>
+%
+##### SOURCE END #####
+--></body></html>
