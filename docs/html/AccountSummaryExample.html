@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>TWSAccountSummaryExample</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-12-30"><meta name="DC.source" content="TWSAccountSummaryExample.m"><style type="text/css">
+      --><title>Account Summary</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-01-04"><meta name="DC.source" content="AccountSummaryExample.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1></h1><!--introduction--><p>For more information, see the official site: <a href="https://github.com/softwarespartan">github.io</a></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Initialize session with TWS and request account summary</a></li><li><a href="#2">Retreive account summary events from the event buffer and print</a></li><li><a href="#3">References</a></li></ul></div><h2>Initialize session with TWS and request account summary<a name="1"></a></h2><pre class="codeinput"><span class="comment">% initialize session with TWS</span>
+  </style></head><body><div class="content"><h1>Account Summary</h1><!--introduction--><p>For most recent version, see the official docs at <a href="http://softwarespartan.github.io/IB4m/docs/html/AccountSummaryExample.html">github.io/IB4m</a></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Initialize session with Trader Workstation</a></li><li><a href="#2">Make request for account summary</a></li><li><a href="#3">Processing Account Summary Events</a></li><li><a href="#4">See Also</a></li><li><a href="#5">References</a></li></ul></div><h2>Initialize session with Trader Workstation<a name="1"></a></h2><pre class="codeinput"><span class="comment">% initialize session with TWS</span>
 session = TWS.Session.getInstance();
 
 <span class="comment">% create local buffer for account summary events</span>
@@ -105,10 +105,9 @@ attrkeys = [                               <span class="keyword">...</span>
 
 <span class="comment">% establish connection with TWS</span>
 session.eClientSocket.eConnect(<span class="string">'127.0.0.1'</span>,7496,0);
-
-<span class="comment">% request account attributes</span>
+</pre><h2>Make request for account summary<a name="2"></a></h2><pre class="codeinput"><span class="comment">% request account attributes</span>
 session.eClientSocket.reqAccountSummary(0,<span class="string">'All'</span>,attrkeys);  pause(1);
-</pre><h2>Retreive account summary events from the event buffer and print<a name="2"></a></h2><pre class="codeinput"><span class="comment">% get the event from the local buffer and convert to cell array</span>
+</pre><h2>Processing Account Summary Events<a name="3"></a></h2><pre class="codeinput"><span class="comment">% get the event from the local buffer and convert to cell array</span>
 attrs = collection2cell(buf.get().data);
 
 <span class="comment">% blab about account attributes</span>
@@ -121,33 +120,33 @@ cellfun(@(a)                         <span class="keyword">...</span>
                ),                    <span class="keyword">...</span>
         attrs                        <span class="keyword">...</span>
 );
-</pre><pre class="codeoutput">DU207406: FullExcessLiquidity = 1003796.95 (USD)
-DU207406: FullMaintMarginReq = 0.00 (USD)
-DU207406: MaintMarginReq = 0.00 (USD)
-DU207406: RegTEquity = 1003796.95 (USD)
-DU207406: ExcessLiquidity = 1003796.95 (USD)
-DU207406: Cushion = 1 ()
-DU207406: DayTradesRemaining = -1 ()
-DU207406: FullAvailableFunds = 1003796.95 (USD)
-DU207406: FullInitMarginReq = 0.00 (USD)
+</pre><pre class="codeoutput">DU207406: FullMaintMarginReq = 0.00 (USD)
 DU207406: GrossPositionValue = 0.00 (USD)
-DU207406: LookAheadExcessLiquidity = 1003796.95 (USD)
+DU207406: FullAvailableFunds = 1003650.61 (USD)
+DU207406: LookAheadNextChange = 0 ()
+DU207406: SMA = 1003650.62 (USD)
+DU207406: Cushion = 1 ()
+DU207406: ExcessLiquidity = 1003650.61 (USD)
+DU207406: LookAheadInitMarginReq = 0.00 (USD)
+DU207406: DayTradesRemaining = -1 ()
+DU207406: LookAheadExcessLiquidity = 1003650.61 (USD)
+DU207406: MaintMarginReq = 0.00 (USD)
+DU207406: FullInitMarginReq = 0.00 (USD)
 DU207406: LookAheadMaintMarginReq = 0.00 (USD)
 DU207406: RegTMargin = 0.00 (USD)
-DU207406: SMA = 1003796.95 (USD)
-DU207406: LookAheadNextChange = 0 ()
-DU207406: AvailableFunds = 1003796.95 (USD)
-DU207406: LookAheadInitMarginReq = 0.00 (USD)
-DU207406: LookAheadAvailableFunds = 1003796.95 (USD)
+DU207406: RegTEquity = 1003650.61 (USD)
+DU207406: AvailableFunds = 1003650.61 (USD)
+DU207406: FullExcessLiquidity = 1003650.61 (USD)
 DU207406: InitMarginReq = 0.00 (USD)
-</pre><h2>References<a name="3"></a></h2><p>Interactive Brokers API:</p><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/econnect.htm">eConnect</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/accountsummary.htm">reqAccountSummary</a></li></ul></div><p>TWS@Github:</p><div><ul><li><a href="https://github.com/softwarespartan/TWS/blob/master/src/com/tws/AccountAttribute.java">AccountAttributes</a></li></ul></div><p>Apache Commons:</p><div><ul><li><a href="https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html">CircularFifoBuffer</a></li></ul></div><p>Oracle:</p><div><ul><li><a href="http://docs.oracle.com/javase/8/docs/api/java/util/HashSet.html">HashSet</a></li></ul></div><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+DU207406: LookAheadAvailableFunds = 1003650.61 (USD)
+</pre><h2>See Also<a name="4"></a></h2><p><a href="http://softwarespartan.github.io/IB4m/docs/html/AccountUpdatesExample.html">AccountUpdatesExample</a> | <a href="http://softwarespartan.github.io/IB4m/docs/html/PositionsExample.html">PositionsExample</a></p><h2>References<a name="5"></a></h2><p>Interactive Brokers API:</p><div><ul><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/econnect.htm">eConnect</a></li><li><a href="https://www.interactivebrokers.com/en/software/api/apiguide/java/accountsummary.htm">reqAccountSummary</a></li></ul></div><p>TWS@Github:</p><div><ul><li><a href="https://github.com/softwarespartan/TWS/blob/master/src/com/tws/AccountAttribute.java">AccountAttributes</a></li></ul></div><p>Apache Commons:</p><div><ul><li><a href="https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html">CircularFifoBuffer</a></li></ul></div><p>Oracle:</p><div><ul><li><a href="http://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html">HashMap</a></li></ul></div><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
-%%
-% For more information, see the official site:
-% <https://github.com/softwarespartan github.io>
+%% Account Summary
+% For most recent version, see the official docs at
+% <http://softwarespartan.github.io/IB4m/docs/html/AccountSummaryExample.html github.io/IB4m>
 
 
-%% Initialize session with TWS and request account summary
+%% Initialize session with Trader Workstation
 
 % initialize session with TWS
 session = TWS.Session.getInstance();
@@ -189,10 +188,12 @@ attrkeys = [                               ...
 % establish connection with TWS
 session.eClientSocket.eConnect('127.0.0.1',7496,0);
 
+%% Make request for account summary
+
 % request account attributes
 session.eClientSocket.reqAccountSummary(0,'All',attrkeys);  pause(1);
 
-%% Retreive account summary events from the event buffer and print
+%% Processing Account Summary Events
 
 % get the event from the local buffer and convert to cell array
 attrs = collection2cell(buf.get().data);
@@ -207,6 +208,9 @@ cellfun(@(a)                         ...
                ),                    ...
         attrs                        ...
 );
+
+%% See Also
+% <http://softwarespartan.github.io/IB4m/docs/html/AccountUpdatesExample.html AccountUpdatesExample> | <http://softwarespartan.github.io/IB4m/docs/html/PositionsExample.html PositionsExample>
 
 %% References
 % Interactive Brokers API: 
@@ -224,7 +228,7 @@ cellfun(@(a)                         ...
 %
 % Oracle:
 %
-% * <http://docs.oracle.com/javase/8/docs/api/java/util/HashSet.html HashSet>
+% * <http://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html HashMap>
 %
 ##### SOURCE END #####
 --></body></html>
