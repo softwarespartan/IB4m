@@ -1,6 +1,6 @@
 %% Welcome to IB4m
 %
-% Interactive Brokers API in Matlab
+% Interactive Brokers API for Matlab
 %
 % For the latest src and docs visit  
 % <http://softwarespartan.github.io/IB4m IB4m at github>
@@ -74,3 +74,7 @@ AccountSummaryExample
 %
 % * <https://www.interactivebrokers.com/en/index.php?f=tws&p=papertrader IB PaperTrader>
 % * <http://ibkb.interactivebrokers.com/node/663 IBKB: Open Paper Trading Account>
+
+%% System Requirements 
+%
+% IB4m has been tested on OSX 10.10, Windows 7, and Windows 8 with both Java 7 and Java 8 using the latest versions of Trader Workstation (Dec 19, 2014, Server versions 75 and 76)
