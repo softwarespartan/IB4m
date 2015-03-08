@@ -38,7 +38,88 @@ DU207406: DayTradesRemaining = -1 ()
 DU207406: FullInitMarginReq = 0.00 (USD)
 DU207406: Cushion = 1 ()
 DU207406: AvailableFunds = 1003650.61 (USD)
-</pre><p>To save your matlab path use "savepath" or "pathtool". Also, consider adding TWS.jar to your static java classpath ("edit classpath.txt"). Otherwise, will need to add the jar file after each matlab restart.</p><h2>Tutorials<a name="7"></a></h2><p>Tutorials for MarketData, Scanner Subscriptions, Execution Details, and more.  Everything you need to get up and running.</p><div><ul><li><a href="http://softwarespartan.github.io/IB4m/docs/html/ScannerSubscriptionExample.html">Market Scanner Subscriptions</a></li><li><a href="http://softwarespartan.github.io/IB4m/docs/html/MarketDataExample.html">Real-time Market Data (Level I)</a></li><li><a href="http://softwarespartan.github.io/IB4m/docs/html/MarketDepthExample.html">Real-time Market Depth (Level II)</a></li><li><a href="http://softwarespartan.github.io/IB4m/docs/html/HistoricalDataExample.html">Historical Data Requests</a></li></ul></div><div><ul><li><a href="http://softwarespartan.github.io/IB4m/docs/html/ContractDetailsExample.html">Obtain Contract Details</a></li><li><a href="http://softwarespartan.github.io/IB4m/docs/html/ExecutionDetailsExample.html">Subscribe to Order Execution Details</a></li><li><a href="http://softwarespartan.github.io/IB4m/docs/html/OpenOrdersExample.html">Request OpenOrders</a></li></ul></div><div><ul><li><a href="http://softwarespartan.github.io/IB4m/docs/html/AccountSummaryExample.html">Get Account Summary</a></li><li><a href="http://softwarespartan.github.io/IB4m/docs/html/AccountUpdatesExample.html">Subscribe to Account Updates</a></li><li><a href="http://softwarespartan.github.io/IB4m/docs/html/PortfolioUpdateExample.html">Configure real-time Portfolio Updates</a></li><li><a href="http://softwarespartan.github.io/IB4m/docs/html/PositionsExample.html">Request current positions</a></li></ul></div><div><ul><li><a href="http://softwarespartan.github.io/IB4m/docs/html/ErrorExample.html">Processing API error events</a></li><li><a href="http://softwarespartan.github.io/IB4m/docs/html/NextOrderIdExample.html">Request and listen for NextOrderId</a></li></ul></div><h2>Getting More Help<a name="9"></a></h2><p>Email brown.2179-at-gmail.com with questions, suggestions, comments etc.</p><h2>References<a name="10"></a></h2><div><ul><li><a href="http://www.interactivebrokers.com/download/newMark/PDFs/APIprintable.pdf">IB API Reference</a></li><li><a href="https://www.interactivebrokers.com/download/JavaAPIGettingStarted.pdf">Java API Getting Started Guide</a></li></ul></div><div><ul><li><a href="https://www.interactivebrokers.com/en/?f=%2Fen%2Fcontrol%2Fsystemstandalone.php%3Fos%3Dwin%26amp%3Bib_entity%3D">TraderWorkstation Download (Windows)</a></li><li><a href="https://www.interactivebrokers.com/en/?f=%2Fen%2Fcontrol%2Fsystemstandalone.php%3Fos%3Dmac%26amp%3Bib_entity%3D">TraderWorkstation Download (Mac)</a></li><li><a href="https://www.interactivebrokers.com/en/?f=%2Fen%2Fcontrol%2Fsystemstandalone.php%3Fos%3Dunix%26amp%3Bib_entity%3D">TraderWorkstation Download (Unix)</a></li></ul></div><div><ul><li><a href="https://www.interactivebrokers.com/en/?f=%2Fen%2Fsoftware%2FinstallationInstructions.php">TraderWorkstation Install Instructions</a></li></ul></div><div><ul><li><a href="https://www.interactivebrokers.com/en/index.php?f=tws&amp;p=papertrader">IB PaperTrader</a></li><li><a href="http://ibkb.interactivebrokers.com/node/663">IBKB: Open Paper Trading Account</a></li></ul></div><h2>System Requirements<a name="11"></a></h2><p>IB4m has been tested on OSX 10.10, Windows 7, and Windows 8 with both Java 7 and Java 8 using the latest versions of Trader Workstation (Dec 19, 2014, Server versions 75 and 76)</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div>
+</pre>
+
+<p>
+    To save your matlab path use "savepath" or "pathtool". Also, consider adding TWS.jar to your static java classpath ("edit classpath.txt"). 
+    Otherwise, will need to add the jar file after each matlab restart.
+</p>
+
+<h2>Tutorials<a name="7"></a></h2>
+    <p>Tutorials for MarketData, Scanner Subscriptions, Execution Details, and more.  Everything you need to get up and running.</p>
+    <div><ul>
+        <li><a href="http://softwarespartan.github.io/IB4m/docs/html/ScannerSubscriptionExample.html">Market Scanner Subscriptions</a></li>
+        <li><a href="http://softwarespartan.github.io/IB4m/docs/html/MarketDataExample.html">Real-time Market Data (Level I)</a></li>
+        <li><a href="http://softwarespartan.github.io/IB4m/docs/html/MarketDepthExample.html">Real-time Market Depth (Level II)</a></li>
+        <li><a href="http://softwarespartan.github.io/IB4m/docs/html/HistoricalDataExample.html">Historical Data Requests</a></li>
+     </ul></div>
+
+     <div><ul>
+         <li><a href="http://softwarespartan.github.io/IB4m/docs/html/ContractDetailsExample.html">Obtain Contract Details</a></li>
+         <li><a href="http://softwarespartan.github.io/IB4m/docs/html/ExecutionDetailsExample.html">Subscribe to Order Execution Details</a></li>
+         <li><a href="http://softwarespartan.github.io/IB4m/docs/html/OpenOrdersExample.html">Request OpenOrders</a></li>
+     </ul></div>
+
+     <div><ul>
+         <li><a href="http://softwarespartan.github.io/IB4m/docs/html/AccountSummaryExample.html">Get Account Summary</a></li>
+         <li><a href="http://softwarespartan.github.io/IB4m/docs/html/AccountUpdatesExample.html">Subscribe to Account Updates</a></li>
+         <li><a href="http://softwarespartan.github.io/IB4m/docs/html/PortfolioUpdateExample.html">Configure real-time Portfolio Updates</a></li>
+         <li><a href="http://softwarespartan.github.io/IB4m/docs/html/PositionsExample.html">Request current positions</a></li>
+     </ul></div>
+
+     <div><ul>
+         <li><a href="http://softwarespartan.github.io/IB4m/docs/html/ErrorExample.html">Processing API error events</a></li>
+         <li><a href="http://softwarespartan.github.io/IB4m/docs/html/NextOrderIdExample.html">Request and listen for NextOrderId</a></li>
+     </ul></div>
+
+<h2>Getting More Help<a name="9"></a></h2>
+    <p>Email brown.2179-at-gmail.com with questions, suggestions, comments etc.</p>
+
+<h2>References<a name="10"></a></h2>
+    <div><ul>
+        <li><a href="http://www.interactivebrokers.com/download/newMark/PDFs/APIprintable.pdf">IB API Reference</a></li>
+        <li><a href="https://www.interactivebrokers.com/download/JavaAPIGettingStarted.pdf">Java API Getting Started Guide</a></li>
+    </ul></div>
+
+    <div><ul>
+        <li><a href="https://www.interactivebrokers.com/en/?f=%2Fen%2Fcontrol%2Fsystemstandalone.php%3Fos%3Dwin%26amp%3Bib_entity%3D">TraderWorkstation Download (Windows)</a></li>
+        <li><a href="https://www.interactivebrokers.com/en/?f=%2Fen%2Fcontrol%2Fsystemstandalone.php%3Fos%3Dmac%26amp%3Bib_entity%3D">TraderWorkstation Download (Mac)</a></li>
+        <li><a href="https://www.interactivebrokers.com/en/?f=%2Fen%2Fcontrol%2Fsystemstandalone.php%3Fos%3Dunix%26amp%3Bib_entity%3D">TraderWorkstation Download (Unix)</a></li>
+    </ul></div>
+
+    <div><ul>
+        <li><a href="https://www.interactivebrokers.com/en/?f=%2Fen%2Fsoftware%2FinstallationInstructions.php">TraderWorkstation Install Instructions</a></li>
+    </ul></div>
+
+    <div><ul>
+        <li><a href="https://www.interactivebrokers.com/en/index.php?f=tws&amp;p=papertrader">IB PaperTrader</a></li>
+        <li><a href="http://ibkb.interactivebrokers.com/node/663">IBKB: Open Paper Trading Account</a></li>
+    </ul></div>
+
+<h2>System Requirements<a name="11"></a></h2>
+    <p>IB4m has been tested on OSX 10.10, Windows 7, and Windows 8 with both Java 7 and Java 8 using the latest versions of Trader Workstation (Dec 19, 2014, Server versions 75 and 76)</p>
+    <p>Note that older versions of Matlab might use Java 6.  You can use the links below to launch Matlab with different (newer) version of Java</p>
+
+    <div><ul>
+        <li><a href="http://www.mathworks.com/matlabcentral/answers/130359-how-do-i-change-the-java-virtual-machine-jvm-that-matlab-is-using-on-windows">Change Matlab JVM Windows</a></li>
+        <li><a href="http://www.mathworks.com/matlabcentral/answers/103056-how-do-i-change-the-java-virtual-machine-jvm-that-matlab-is-using-for-mac-os">Change Matlab JVM OSX</a></li>
+    </ul></div>
+
+    <div><ul>
+        <li><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html">Java 7 JDK Download</a></li>
+        <li><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">Java 8 JDK Download</a></li>
+    </ul></div>
+
+    <p>Finally, make sure to double check your IB account data subscriptions if you have trouble with obtaining historical data etc.</p>
+
+    <div><ul>
+        <li><a href="https://www.interactivebrokers.com/en/index.php?f=marketData&p=mdata">Interactive Brokers Market Data Subscriptions</a></li>
+    </ul></div>
+
+https://www.interactivebrokers.com/en/index.php?f=marketData&p=mdata
+
+    <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p>
+</div>
 <script>
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
