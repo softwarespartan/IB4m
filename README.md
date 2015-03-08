@@ -11,9 +11,7 @@
                         </ol>
                     </div>
                     <p>**(<i>File -&gt; GlobalConfiguration -&gt; API -&gt; Settings</i>)</p>
-                    <p>Navigate to the IB4m directory in Matlab</p><pre class="codeinput">cd <span class="string">~/Dropbox/IB4m</span>
-                    </pre><p>OK, now add <i>IB4m</i> and <i>IB4m/docs</i> to your matlab path</p><pre class="codeinput">addpath(path,pwd);  addpath(path,fullfile(pwd,<span class="string">'docs'</span>))
-                    </pre><p>Finally, add TWS.jar to the (dynamic) java classpath</p><pre class="codeinput">javaaddpath(fullfile(pwd,<span class="string">'Jar'</span>,<span class="string">'TWS.jar'</span>))</pre>
+                    <p>Navigate to the IB4m directory in Matlab</p><pre class="codeinput">cd <span class="string">~/Dropbox/IB4m</span></pre><p>OK, now add <i>IB4m</i> and <i>IB4m/docs</i> to your matlab path</p><pre class="codeinput">addpath(path,pwd);  addpath(path,fullfile(pwd,<span class="string">'docs'</span>))</pre><p>Finally, add TWS.jar to the (dynamic) java classpath</p><pre class="codeinput">javaaddpath(fullfile(pwd,<span class="string">'Jar'</span>,<span class="string">'TWS.jar'</span>))</pre>
                     <p>You're all set!  Do a quick test to get summary of your IB account</p>
                     <pre class="codeinput">AccountSummaryExample</pre>
 <pre class="codeoutput">
