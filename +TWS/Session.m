@@ -7,6 +7,7 @@ classdef Session < handle
         
         eventBuffer
         eventListenerHandle
+        errorListenerHandle
     end
     
     methods(Access = 'private')        
@@ -37,6 +38,13 @@ classdef Session < handle
                                                       TWS.Events.NOTIFICATION            , ...
                                                       @(s,e)this.eventBuffer.add(e.event)  ...
                                                      );
+                                                 
+            % set up listener to pipe the error messages to the command window
+            this.errorListenerHandle = event.listener(                          ...
+                                                      TWS.Events.getInstance  , ...
+                                                      TWS.Events.ERROR        , ...
+                                                      @(s,e)disp(e.event.data)  ...
+                                                     );
         end 
     end
     
@@ -64,6 +72,11 @@ classdef Session < handle
             if ~isempty(this.eventListenerHandle)
                 % clean up matlab event listener
                 delete(this.eventListenerHandle);
+            end
+            
+            if ~isempty(this.errorListenerHandle)
+                % clean up matlab error listener
+                delete(this.errorListenerHandle);
             end
             
             % terminate the TWS connection
