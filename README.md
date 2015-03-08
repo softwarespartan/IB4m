@@ -41,7 +41,7 @@ DU207406: FullInitMarginReq = 0.00 (USD)
 DU207406: Cushion = 1 ()
 DU207406: AvailableFunds = 1003650.61 (USD)
 </pre>
-                    <p>To save your matlab path use "savepath" or "pathtool". Also, consider adding TWS.jar to your static java classpath ("edit classpath.txt"). Otherwise, will need to add the jar file after each matlab restart.</p>
+<p>To save your matlab path use "savepath" or "pathtool". Also, consider adding TWS.jar to your static java classpath ("edit classpath.txt"). Otherwise, will need to add the jar file after each matlab restart.</p>
                     <h2>Tutorials<a name="7"></a></h2>
                     <p>Tutorials for MarketData, Scanner Subscriptions, Execution Details, and more.  Everything you need to get up and running.</p>
                     <div><ul>
