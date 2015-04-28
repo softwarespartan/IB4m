@@ -9,7 +9,7 @@ function processNotification( n )
        TWS.Events.NOTIFICATION          , ...
        TWS.EventData.Notification(event)  ...
       );
-
+  
     switch class(event)
         
         case 'com.tws.Handler$MarketDepthEvent'
@@ -132,6 +132,14 @@ function processNotification( n )
                 TWS.EventData.ScannerData(event)       ...
             );
         
+        case 'com.tws.Handler$OptionComputationEvent'
+            
+            notify(                                    ...
+                TWS.Events.getInstance()             , ...
+                TWS.Events.OPTIONCOMPUTATION         , ...
+                TWS.EventData.OptionComputation(event) ...
+            );
+        
         case 'com.tws.Handler$ErrorEvent'
             
             notify(                                    ...
@@ -144,4 +152,3 @@ function processNotification( n )
             warning(['could not process event: ',class(e)])
     end
 end
-
