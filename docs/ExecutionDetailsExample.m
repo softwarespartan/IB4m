@@ -101,6 +101,9 @@ disp(execEvents{end}.data)
 % * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqexecutions.htm EClientSocket:reqExecutions>
 % * <https://www.interactivebrokers.com/en/software/api/apiguide/java/contractdetails.htm EWrapper:contractDetails>
 %
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/order.htm Order>
+% * <https://www.interactivebrokers.com/en/software/api/apiguide/tables/supported_order_types.htm SupportedOrderTypes>
+%
 % * <https://www.interactivebrokers.com/en/software/api/apiguide/java/placeorder.htm EClientSocket:placeOrder>
 % * <https://www.interactivebrokers.com/en/software/api/apiguide/java/cancelorder.htm EClientSocket:cancelOrder>
 % * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqglobalcancel.htm EClientSocket:reqGlobalCancel>
