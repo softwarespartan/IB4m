@@ -51,6 +51,7 @@ DU207406: AvailableFunds = 1003650.61 (USD)
 <div><ul>
 <li><a href="http://softwarespartan.github.io/IB4m/docs/html/ContractDetailsExample.html">Obtain Contract Details</a></li>
 <li><a href="http://softwarespartan.github.io/IB4m/docs/html/ExecutionDetailsExample.html">Subscribe to Order Execution Details</a></li>
+<li><a href="http://softwarespartan.github.io/IB4m/docs/html/ExecutionDetailsExample.html">Placing Orders</a></li>
 <li><a href="http://softwarespartan.github.io/IB4m/docs/html/OpenOrdersExample.html">Request OpenOrders</a></li>
 </ul></div>
 <div><ul>
