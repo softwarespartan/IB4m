@@ -186,8 +186,21 @@ classdef EventHandler < TWS.EventHandler
                 % if there are no listeners left, shut down the request in API
                 if isempty(listeners)
                     
+                    contract = this.contractMap.get(rid);
+                    
                     % remove the request id from the listener map
                     this.listenerMap.remove(rid);
+                    
+                    % remove this rid from the contract map
+                    this.contractMap.remove(rid);
+                    
+                    % remove contract from map
+                    this.reverseContractMap.remove(contract);
+                    
+                    % remove symbol from map
+                    this.reverseSymbolMap.remove(contract.m_symbol);
+                    
+                    % already removed from reverseObjMap above
                     
                     % make official API call for cancelation
                     this.session.eClientSocket.cancelMktData(rid);
