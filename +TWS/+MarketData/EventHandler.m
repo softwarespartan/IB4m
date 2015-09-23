@@ -14,11 +14,12 @@ classdef EventHandler < TWS.EventHandler
         
         reverseObjMap;
         reverseSymbolMap;
-        reverseContractMap;
+        reverseContractMap;        
     end
     
     properties (Access = 'private')
-        eventListenerHandle
+        logger;
+        eventListenerHandle;
     end
     
     properties(Constant)
@@ -38,11 +39,11 @@ classdef EventHandler < TWS.EventHandler
         
         function this = EventHandler()
             
+            % init the logger
+            this.logger = TWS.Logger.getInstance(class(this));
+            
             % init the reqest id counter at zero 
             this.reqId = -1;
-            
-            % get session instance
-            this.session = TWS.Session.getInstance();
             
             % initialize hash map of reqId to matlab objs
             this.listenerMap = containers.Map('KeyType','double','ValueType','any');
@@ -58,6 +59,9 @@ classdef EventHandler < TWS.EventHandler
             
             % init reverse object map (based on listener.uuid --> reqId)
             this.reverseObjMap      = java.util.HashMap();
+                        
+            % get TWS session instance
+            this.session = TWS.Session.getInstance();
             
             % set up call back for market data events 
             this.eventListenerHandle = event.listener(                                  ...
@@ -65,6 +69,9 @@ classdef EventHandler < TWS.EventHandler
                                                       TWS.Events.MARKETDATA           , ...
                                                       @(s,e)this.notify(e.event)  ...
                                                      );
+                                                 
+            % blab about initialization
+            this.logger.trace([TWS.Logger.this,'>',' has been initialized:', this.uuid]);
         end
     end
    
@@ -81,9 +88,14 @@ classdef EventHandler < TWS.EventHandler
             % enforce input arg2 types
             if ~isa(listener,'TWS.MarketData.EventListener'); error('input arg 2 must be of type TWS.MarketData.EventListener'); end
             
+            % create contract string for logging messages
+            contractStr = [char(contract.m_symbol),'@',char(contract.m_primaryExch),' [',char(contract.m_secType),']'];
+            
             % make sure that the listener is not already listening
             if this.reverseObjMap.containsKey(listener.uuid)
-                warning(['object ',listener.uuid,' already registered']); return;
+                
+                % blab at the logger about already listening ...
+                this.logger.warning([TWS.Logger.this,'> ','object ',listener.uuid,' already registered for ', contractStr]); return;
             end
             
             % make sure the contract does not already exist
@@ -98,8 +110,11 @@ classdef EventHandler < TWS.EventHandler
                 % simply add the listener to existing subscription
                 this.listenerMap(rid) = [this.listenerMap(rid),listener]; 
                 
+                % blab at the logger about adding listener to existing subscription
+                this.logger.debug([TWS.Logger.this,'> ','object ',listener.uuid,' added to existing subscription for ', contractStr]);
+                
                 % that's all
-                return
+                return;
             end
             
             % set default generic tick list if list not provided
@@ -114,6 +129,11 @@ classdef EventHandler < TWS.EventHandler
             % make sure that each tick provided is in the generic tick list
             for i = 1:numel(tickList)
                 if ~any(this.genericTickList == tickList(i))
+                    
+                    % blab at the logger about already listening ...
+                    this.logger.error([TWS.Logger.this,'>',' invalid tick ids', contractStr]);
+                    
+                    % throw formal matlab error here since [maybe squelch later]
                     error('input arg 2 must be list or array of integer tick ids');
                 end
             end
@@ -135,6 +155,9 @@ classdef EventHandler < TWS.EventHandler
             
             % update the reverse object map
             this.reverseObjMap.put(listener.uuid,this.reqId);
+            
+            % make logger call to note  new market data request
+            this.logger.debug([TWS.Logger.this,'> ', contractStr,' initializing new market data request with TWS with listener ',listener.uuid]);
             
             % make the official TWS API call for market data request
             this.session.eClientSocket.reqMktData(this.reqId,contract,tickList,false,[]);
@@ -162,6 +185,12 @@ classdef EventHandler < TWS.EventHandler
                 % get the request id associated with this object
                 rid = this.reverseObjMap.get(arg.uuid);
                 
+                % get the contract for this rid
+                contract = this.contractMap.get(rid);
+
+                % create contract string for logging messages
+                contractStr = [char(contract.m_symbol),'@',char(contract.m_primaryExch),' [',char(contract.m_secType),']'];
+                
                 % get list of listeners for this request id 
                 listeners = this.listenerMap(rid);
                 
@@ -169,10 +198,21 @@ classdef EventHandler < TWS.EventHandler
                 indx = strcmp(arg.uuid, {listeners.uuid});
                 
                 % sanity check - part 1
-                if ~any(indx); error(['listener ',arg.uuid,' not found in rid ',num2str(rid)]); end
+                if ~any(indx)
+                
+                    % create logger message
+                    this.logger.error([TWS.Logger.this,'> ','listener ',arg.uuid,' not found in rid ',num2str(rid)])
+                    
+                    % raise formal matlab error
+                    error(['listener ',arg.uuid,' not found in rid ',num2str(rid)]); 
+                end
                 
                 % sanity check - part 2
-                if sum(indx) > 1; warning(['multiple listeners matching uuid: ',arg.uuid]); end
+                if sum(indx) > 1
+                    
+                    % create logger message about issue
+                    this.logger.warning([TWS.Logger.this,'> ','multiple listeners matching uuid: ',arg.uuid])
+                end
                 
                 % remove the listener from obj map
                 this.reverseObjMap.remove(arg.uuid);
@@ -183,10 +223,17 @@ classdef EventHandler < TWS.EventHandler
                 % finally, set the listeners map to this modified version
                 this.listenerMap(rid) = listeners;
                 
+                % make logger call to note  new market data request
+                this.logger.debug([TWS.Logger.this,'> ', contractStr,' removed listener ',arg.uuid]);
+                
                 % if there are no listeners left, shut down the request in API
                 if isempty(listeners)
                     
+                    % get the contract for this rid
                     contract = this.contractMap.get(rid);
+                    
+                    % create contract string for logging messages
+                    contractStr = [char(contract.m_symbol),'@',char(contract.m_primaryExch),' [',char(contract.m_secType),']'];
                     
                     % remove the request id from the listener map
                     this.listenerMap.remove(rid);
@@ -204,6 +251,9 @@ classdef EventHandler < TWS.EventHandler
                     
                     % make official API call for cancelation
                     this.session.eClientSocket.cancelMktData(rid);
+                    
+                    % make logger call to note cancelled market data request
+                    this.logger.debug([TWS.Logger.this,'> ', contractStr,' cancelled market data request with TWS']);
                 end
                 
                 % we're done
@@ -257,7 +307,9 @@ classdef EventHandler < TWS.EventHandler
             
             % make sure this is actual a reqId in the map first
             if ~this.listenerMap.isKey(event.data.reqId); 
-                warning(['reqId not found: ',num2str(event.data.reqId)]); return;
+                
+                % blab about it on the logger
+                this.logger.warning([TWS.Logger.this,'> ','reqId not found: ',num2str(event.data.reqId)]);
             end
             
             % get the list of handlers for this event
@@ -284,7 +336,7 @@ classdef EventHandler < TWS.EventHandler
                     this.session.eClientSocket.cancelMktData(keySet{i}); 
                     
                     % blab about it
-                    disp(['reqId ',num2str(keySet{i}),' has been removed']);
+                    this.logger.debug([TWS.Logger.this,'> ','reqId ',num2str(keySet{i}),' has been cancelled with TWS']);
                 end
             end
 
