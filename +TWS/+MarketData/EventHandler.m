@@ -45,7 +45,7 @@ classdef EventHandler < TWS.EventHandler
             % init the reqest id counter at zero 
             this.reqId = -1;
             
-            % initialize hash map of reqId to matlab objs
+            % initialize hash map of reqId to array of matlab objs
             this.listenerMap = containers.Map('KeyType','double','ValueType','any');
             
             % init the contract map (reqId --> contract)
@@ -91,11 +91,31 @@ classdef EventHandler < TWS.EventHandler
             % create contract string for logging messages
             contractStr = [char(contract.m_symbol),'@',char(contract.m_primaryExch),' [',char(contract.m_secType),']'];
             
-            % make sure that the listener is not already listening
+            % make sure that the listener is not already listening on this contract
             if this.reverseObjMap.containsKey(listener.uuid)
                 
-                % blab at the logger about already listening ...
-                this.logger.warning([TWS.Logger.this,'> ','object ',listener.uuid,' already registered for ', contractStr]); return;
+                % get array of rid associated with this listener
+                rids = this.reverseObjMap.get(listener.uuid);
+                
+                % get contract for each rid and compare with input contract
+                for i = 1:numel(rids)
+                    
+                    % get existing contract for this reqId
+                    existingContract = this.contractMap.get(rids(i));
+                    
+                    % if already listening on exisitng contract then new dice
+                    if strcmp(existingContract.m_symbol,contract.m_symbol)
+                        
+                        % create contract string for logging messages
+                        contractStr = [char(existingContract.m_symbol),'@',char(existingContract.m_primaryExch),' [',char(existingContract.m_secType),']'];
+                        
+                        % blab at the logger about already listening ...
+                        this.logger.debug([TWS.Logger.this,'> ','object ',listener.uuid,' already registered for ', contractStr]); 
+                        
+                        % nothing else to do ...
+                        return;
+                    end
+                end
             end
             
             % make sure the contract does not already exist
@@ -154,7 +174,15 @@ classdef EventHandler < TWS.EventHandler
             this.reverseSymbolMap.put(contract.m_symbol,this.reqId);
             
             % update the reverse object map
-            this.reverseObjMap.put(listener.uuid,this.reqId);
+            if this.reverseObjMap.containsKey(listener.uuid)
+                
+                % ok, we're already in the map just append another reqId for this object
+                this.reverseObjMap.put(listener.uuid,[this.reqId,this.reverseObjMap.get(listener.uuid)]);
+            else
+                
+                % new object so initialize a map entry
+                this.reverseObjMap.put(listener.uuid,this.reqId);
+            end
             
             % make logger call to note  new market data request
             this.logger.debug([TWS.Logger.this,'> ', contractStr,' initializing new market data request with TWS with listener ',listener.uuid]);
@@ -164,6 +192,187 @@ classdef EventHandler < TWS.EventHandler
             
             % set the output arg
             rid = this.reqId;
+        end
+        
+        function unsubscribeForReqId(this,rid)
+            
+            if nargin ~=2
+                
+                % yammer on about it in the log
+                this.logger.error([TWS.Logger.this,'> ', 'arg 1 must be integer request id']);
+                
+                % for now, raise formal matlab error
+                error('arg1 must be integer request id'); 
+            end
+            
+            % enforce function signature
+            if ~isa(rid,'double')
+                
+                % yell
+                this.logger.error([TWS.Logger.this,'> ',' arg 1 must be of type double']);
+                
+                % rais formal matlab error
+                error('arg1 must be of type double');
+            end
+            
+            % make sure that the request id exists in both maps
+            if ~ this.listenerMap.isKey(rid) || ~ this.contractMap.containsKey(rid)
+                
+                % elaborate on the log
+                this.logger.error([TWS.Logger.this,'> ','request id not found: ',num2str(rid)]);
+                
+                % raise formal matlab error
+                error(['request id not found in listener map: ',num2str(rid)]);
+            end
+            
+            % get the contract for this request id
+            contract = this.contractMap.get(rid);
+            
+            % get list of listeners for this rid
+            listeners = this.listenerMap(rid);
+            
+            % remove request --> listener object mapping
+            this.listenerMap.remove(rid);  
+            
+            % remove symbol look up
+            this.reverseSymbolMap.remove(contract.m_symbol);
+            
+            % remove contract --> request id mapping
+            this.reverseContractMap.remove( contract );
+            
+            % remove request id --> contract mapping 
+            this.contractMap.remove(rid);
+            
+            % go through each listener and remove rid from list
+            for i = 1:numel(listeners)
+                
+                % get the i'th listener
+                l = listeners(i);
+                
+                % get associated request ids
+                reqIds = this.reverseObjMap.get(l.uuid);
+                
+                % remove rid from array of reqIds
+                reqIds(reqIds==rid) = [];
+                
+                % put back the list of request ids
+                this.reverseObjMap.put(l.uuid,reqIds);
+                
+                % remove if emtpy
+                if isempty(reqIds); this.reverseObjMap.remove(l.uuid); end
+            end
+            
+            % elaborate on the log
+            this.logger.error([TWS.Logger.this,'> ','request id cancelled with TWS: ',num2str(rid)]);
+            
+            % make official API call for cancelation
+            this.session.eClientSocket.cancelMktData(rid);
+        end
+        
+        function unsubscribeForContract(this,contract)
+            
+            % enforce function signature
+            if nargin ~= 2 || ~isa(contract,'com.ib.client.Contract')
+                
+                % yell 
+                this.logger.error([TWS.Logger.this,'> ',' arg1 must be com.ib.client.Contract'])
+                
+                % raise formal matlab error
+                error(' arg1 must be com.ib.client.Contract');
+            end
+            
+            % denfensive check that key exists in map
+            if ~ this.reverseContractMap.containsKey(contract)
+                
+                % yammer 
+                this.logger.error([TWS.Logger.this,'> ','contract not found: ', char(contract.m_symbol)])
+                
+                % raise matlab error about it
+                error(['contract not found: ', char(contract.m_symbol)]); 
+            end
+            
+            % get the request id associated with this contract
+            rid = this.reverseContractMap.get(contract);
+            
+            % simply call unsubscribe for rid
+            this.unsubscribeForReqId(rid);
+        end
+        
+        function unsubscribeForObj(this,obj)
+            
+            % enforce function signature
+            if nargin ~= 2 || ~isa(obj,'TWS.EventListener')
+                
+                % yell 
+                this.logger.error([TWS.Logger.this,'> ',' arg1 must be TWS.EventListener'])
+                
+                % raise formal matlab error
+                error(' arg1 must be TWS.EventListener');
+            end
+            
+            % ok, if we can not resolve uuid then we're done
+            if ~ this.reverseObjMap.containsKey(obj.uuid); 
+
+                % yell about it on the log
+                this.logger.error([TWS.Logger.this,'> ','object not found: ',obj.uuid])
+
+                % for now, raise formal matlab error
+                error(['object not found: ',obj.uuid]); 
+            end
+            
+            % get list of request ids associated with this object
+            reqIds = this.reverseObjMap.get(obj.uuid);
+            
+            % for each request ...
+            for i = 1:numel(reqIds)
+                
+                % get the i'th request
+                rid = reqIds(i);
+                
+                % get the contract associated with this request id
+                contract = this.contractMap.get(rid);
+                
+                % create contract string for logging messages
+                contractStr = [char(contract.m_symbol),'@',char(contract.m_primaryExch),' [',char(contract.m_secType),']'];
+            
+                % get list of listeners for this request id 
+                listeners = this.listenerMap(rid);
+                
+                % go though list of listeners and remove listener with matching uuid
+                indx = strcmp(obj.uuid, {listeners.uuid});
+                
+                % sanity check - part 1
+                if ~any(indx)
+                
+                    % create logger message
+                    this.logger.error([TWS.Logger.this,'> ','listener ',obj.uuid,' not found in rid ',num2str(rid)])
+                    
+                    % raise formal matlab error
+                    error(['listener ',obj.uuid,' not found in rid ',num2str(rid)]); 
+                end
+                
+                % sanity check - part 2
+                if sum(indx) > 1
+                    
+                    % create logger message about issue
+                    this.logger.debug([TWS.Logger.this,'> ','multiple listeners matching uuid: ',arg.uuid])
+                end
+                
+                % remove the listener
+                listeners(indx) = [];
+                
+                if isempty(listeners)
+                    
+                    % remove the request id all together 
+                    this.unsubscribeForReqId(rid);
+                else
+                    % set the listeners map to this modified version
+                    this.listenerMap(rid) = listeners;
+                end
+                                
+                % make logger call to note  new market data request
+                this.logger.debug([TWS.Logger.this,'> ', contractStr,' removed listener ',obj.uuid]);
+            end
         end
         
         function unsubscribe(this,arg)
@@ -180,7 +389,14 @@ classdef EventHandler < TWS.EventHandler
             if isa(arg,'TWS.EventListener')
                 
                 % ok, if we can not resolve uuid then we're done
-                if ~ this.reverseObjMap.containsKey(arg.uuid); error(['object not found: ',arg.uuid]); end
+                if ~ this.reverseObjMap.containsKey(arg.uuid); 
+                    
+                    % yell about it on the log
+                    this.logger.error([TWS.Logger.this,'> ','object not found: ',arg.uuid])
+                    
+                    % for now, raise formal matlab error
+                    error(['object not found: ',arg.uuid]); 
+                end
                 
                 % get the request id associated with this object
                 rid = this.reverseObjMap.get(arg.uuid);
@@ -211,7 +427,7 @@ classdef EventHandler < TWS.EventHandler
                 if sum(indx) > 1
                     
                     % create logger message about issue
-                    this.logger.warning([TWS.Logger.this,'> ','multiple listeners matching uuid: ',arg.uuid])
+                    this.logger.debug([TWS.Logger.this,'> ','multiple listeners matching uuid: ',arg.uuid])
                 end
                 
                 % remove the listener from obj map
@@ -309,7 +525,7 @@ classdef EventHandler < TWS.EventHandler
             if ~this.listenerMap.isKey(event.data.reqId); 
                 
                 % blab about it on the logger
-                this.logger.warning([TWS.Logger.this,'> ','reqId not found: ',num2str(event.data.reqId)]);
+                this.logger.debug([TWS.Logger.this,'> ','reqId not found: ',num2str(event.data.reqId)]);
             end
             
             % get the list of handlers for this event
