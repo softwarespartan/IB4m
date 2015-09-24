@@ -37,7 +37,7 @@ classdef EventHandler < TWS.EventHandler
     
     methods (Access = 'private')
         
-        function this = EventHandler()
+        function this = EventHandler()                              
             
             % init the logger
             this.logger = TWS.Logger.getInstance(class(this));
@@ -194,7 +194,7 @@ classdef EventHandler < TWS.EventHandler
             rid = this.reqId;
         end
         
-        function unsubscribeForReqId(this,rid)
+        function unsubscribeForReqId(this,rid)                      
             
             if nargin ~=2
                 
@@ -263,13 +263,13 @@ classdef EventHandler < TWS.EventHandler
             end
             
             % elaborate on the log
-            this.logger.error([TWS.Logger.this,'> ','request id cancelled with TWS: ',num2str(rid)]);
+            this.logger.debug([TWS.Logger.this,'> ','request id cancelled with TWS: ',num2str(rid)]);
             
             % make official API call for cancelation
             this.session.eClientSocket.cancelMktData(rid);
         end
         
-        function unsubscribeForContract(this,contract)
+        function unsubscribeForContract(this,contract)              
             
             % enforce function signature
             if nargin ~= 2 || ~isa(contract,'com.ib.client.Contract')
@@ -298,7 +298,7 @@ classdef EventHandler < TWS.EventHandler
             this.unsubscribeForReqId(rid);
         end
         
-        function unsubscribeForObj(this,obj)
+        function unsubscribeForObj(this,obj)                        
             
             % enforce function signature
             if nargin ~= 2 || ~isa(obj,'TWS.EventListener')
@@ -342,7 +342,7 @@ classdef EventHandler < TWS.EventHandler
                 indx = strcmp(obj.uuid, {listeners.uuid});
                 
                 % sanity check - part 1
-                if ~any(indx)
+                if ~any(indx)   
                 
                     % create logger message
                     this.logger.error([TWS.Logger.this,'> ','listener ',obj.uuid,' not found in rid ',num2str(rid)])
@@ -355,7 +355,7 @@ classdef EventHandler < TWS.EventHandler
                 if sum(indx) > 1
                     
                     % create logger message about issue
-                    this.logger.debug([TWS.Logger.this,'> ','multiple listeners matching uuid: ',arg.uuid])
+                    this.logger.debug([TWS.Logger.this,'> ','multiple listeners matching uuid: ',obj.uuid])
                 end
                 
                 % remove the listener
@@ -375,151 +375,96 @@ classdef EventHandler < TWS.EventHandler
             end
         end
         
-        function unsubscribe(this,arg)
+        function unsubscribeForContractForObj(this,contract,obj)    
             
-            % enforce number of input args
-            if nargin ~= 2; error('input arg 1 must be reqId, com.ib.client.Contract, or TWS.EventListener'); end
-            
-            % enforce input arg types
-            if ~isa(arg,'com.ib.client.Contract') && ~isa(arg,'TWS.EventListener') && ~isa(arg,'double') 
-                error('input arg 1 must be reqId, com.ib.client.Contract, or TWS.EventListener'); 
+            % enforce function signature
+            if nargin ~= 3 || ~isa(contract,'com.ib.client.Contract') || ~isa(obj,'TWS.EventListener')
+                
+                % yell 
+                this.logger.error([TWS.Logger.this,'> ',' arg1 must be com.ib.client.Contract and arg2 must be TWS.EventListener'])
+                
+                % raise formal matlab error
+                error(' arg1 must be com.ib.client.Contract arg2 must be TWS.EventListener');
             end
             
-            % treat special case when arg is TWS.EventListener
-            if isa(arg,'TWS.EventListener')
-                
-                % ok, if we can not resolve uuid then we're done
-                if ~ this.reverseObjMap.containsKey(arg.uuid); 
-                    
-                    % yell about it on the log
-                    this.logger.error([TWS.Logger.this,'> ','object not found: ',arg.uuid])
-                    
-                    % for now, raise formal matlab error
-                    error(['object not found: ',arg.uuid]); 
-                end
-                
-                % get the request id associated with this object
-                rid = this.reverseObjMap.get(arg.uuid);
-                
-                % get the contract for this rid
-                contract = this.contractMap.get(rid);
-
-                % create contract string for logging messages
-                contractStr = [char(contract.m_symbol),'@',char(contract.m_primaryExch),' [',char(contract.m_secType),']'];
-                
-                % get list of listeners for this request id 
-                listeners = this.listenerMap(rid);
-                
-                % go though list of listeners and remove listener with matching uuid
-                indx = strcmp(arg.uuid, {listeners.uuid});
-                
-                % sanity check - part 1
-                if ~any(indx)
-                
-                    % create logger message
-                    this.logger.error([TWS.Logger.this,'> ','listener ',arg.uuid,' not found in rid ',num2str(rid)])
-                    
-                    % raise formal matlab error
-                    error(['listener ',arg.uuid,' not found in rid ',num2str(rid)]); 
-                end
-                
-                % sanity check - part 2
-                if sum(indx) > 1
-                    
-                    % create logger message about issue
-                    this.logger.debug([TWS.Logger.this,'> ','multiple listeners matching uuid: ',arg.uuid])
-                end
-                
-                % remove the listener from obj map
-                this.reverseObjMap.remove(arg.uuid);
-                
-                % remove the listener
-                listeners(indx) = [];
-                
-                % finally, set the listeners map to this modified version
-                this.listenerMap(rid) = listeners;
-                
-                % make logger call to note  new market data request
-                this.logger.debug([TWS.Logger.this,'> ', contractStr,' removed listener ',arg.uuid]);
-                
-                % if there are no listeners left, shut down the request in API
-                if isempty(listeners)
-                    
-                    % get the contract for this rid
-                    contract = this.contractMap.get(rid);
-                    
-                    % create contract string for logging messages
-                    contractStr = [char(contract.m_symbol),'@',char(contract.m_primaryExch),' [',char(contract.m_secType),']'];
-                    
-                    % remove the request id from the listener map
-                    this.listenerMap.remove(rid);
-                    
-                    % remove this rid from the contract map
-                    this.contractMap.remove(rid);
-                    
-                    % remove contract from map
-                    this.reverseContractMap.remove(contract);
-                    
-                    % remove symbol from map
-                    this.reverseSymbolMap.remove(contract.m_symbol);
-                    
-                    % already removed from reverseObjMap above
-                    
-                    % make official API call for cancelation
-                    this.session.eClientSocket.cancelMktData(rid);
-                    
-                    % make logger call to note cancelled market data request
-                    this.logger.debug([TWS.Logger.this,'> ', contractStr,' cancelled market data request with TWS']);
-                end
-                
-                % we're done
-                return;
-            end
+            % create contract string for logging messages
+            contractStr = [char(contract.m_symbol),'@',char(contract.m_primaryExch),' [',char(contract.m_secType),']'];
             
-            % init request id
-            rid = arg;
+            % get reqId for this contract
+            rid = this.reverseContractMap.get(contract);
             
-            % translate the input argument into a request id if contract specified
-            if isa(arg,'com.ib.client.Contract'); 
-                
-                % denfensive check that key exists in map
-                if ~ this.reverseContractMap.containsKey(arg); error(['contract not found: ', char(arg.m_symbol)]); end
-                
-                % get the request id associated with this contract
-                rid = this.reverseContractMap.get(arg);
-            end
-            
-            % make sure that the request id exists in both maps
-            if ~ this.listenerMap.isKey(rid) || ~ this.contractMap.containsKey(rid)
-                error(['request id not found: ',num2str(rid)]);
-            end
-            
-            % get the contract for this request id
-            contract = this.contractMap.get(rid);
-            
-            % get list of listeners for this rid
+            % get set of listeners for this request id
             listeners = this.listenerMap(rid);
             
-            % remove request --> listener object mapping
-            this.listenerMap.remove(rid);  
+            % go though list of listeners and remove listener with matching uuid
+            indx = strcmp(obj.uuid, {listeners.uuid});
+
+            % sanity check - part 1
+            if ~any(indx)   
+
+                % create logger message
+                this.logger.error([TWS.Logger.this,'> ','listener ',obj.uuid,' not found in rid ',num2str(rid)])
+
+                % raise formal matlab error
+                error(['listener ',obj.uuid,' not found in rid ',num2str(rid)]); 
+            end
+
+            % sanity check - part 2
+            if sum(indx) > 1
+
+                % create logger message about issue
+                this.logger.debug([TWS.Logger.this,'> ','multiple listeners matching uuid: ',obj.uuid])
+            end
+
+            % remove the listener
+            listeners(indx) = [];
+
+            % if there are no more listeners just remove reqId
+            if isempty(listeners)
+
+                % remove the request id all together 
+                this.unsubscribeForReqId(rid);
+            else
+                % set the listeners map to this modified version
+                this.listenerMap(rid) = listeners;
+            end
+
+            % make logger call to note  new market data request
+            this.logger.debug([TWS.Logger.this,'> ', contractStr,' removed listener ',obj.uuid]);
+        end
             
-            % remove symbol look up
-            this.reverseSymbolMap.remove(contract.m_symbol);
+        function unsubscribe(this,varargin)                              
             
-            % remove contract --> request id mapping
-            this.reverseContractMap.remove( contract );
+            % input is reqId
+            if numel(varargin) == 1 && isa(varargin{1},'double')
+                this.unsubscribeForReqId(varargin{1}); return
+            end
             
-            % remove request id --> contract mapping 
-            this.contractMap.remove(rid);
-            
-            % remove uuid for each listenr
-            cellfun(@(u)this.reverseObjMap.remove(u),{listeners.uuid});
-            
-            % make official API call for cancelation
-            this.session.eClientSocket.cancelMktData(rid);
+            % input is listener
+            if numel(varargin) == 1 && isa(varargin{1},'TWS.EventListener')
+                this.unsubscribeForObj(varargin{1}); return
+            end
+           
+            % input is contract
+            if numel(varargin) == 1 && isa(varargin{1},'com.ib.client.Contract')
+                this.unsubscribeForContract(varargin{1}); return;
+            end
+           
+            % input is contract and object
+            if numel(varargin) == 2
+
+                % set the args
+                listener = varargin{2}; contract = varargin{1};
+               
+                % swap the args if needed
+                if isa(varargin{1},'TWS.EventListener'); listener = varargin{1}; contract = varargin{2}; end
+                
+                % remove object for contract
+                this.unsubscribeForContractForObj(contract,listener);
+            end
         end
         
-        function notify(this,event)   
+        function notify(this,event)                                 
             
             % make sure this is actual a reqId in the map first
             if ~this.listenerMap.isKey(event.data.reqId); 
@@ -537,7 +482,7 @@ classdef EventHandler < TWS.EventHandler
     end
     
     methods
-        function delete(this)           
+        function delete(this)                                       
 
             % cancell all existing market data requests
             if ~ this.listenerMap.isempty()
@@ -562,7 +507,7 @@ classdef EventHandler < TWS.EventHandler
     end
     
     methods (Static)          
-        function instance = getInstance() 
+        function instance = getInstance()                           
             persistent localInstance
             if isempty(localInstance) ; localInstance = TWS.MarketData.EventHandler(); end
             instance = localInstance;
