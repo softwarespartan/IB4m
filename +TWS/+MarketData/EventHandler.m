@@ -1,12 +1,12 @@
 classdef EventHandler < TWS.EventHandler
 % EVENTHANDLER - TWS.MARKETDATA (singleton)
     
-    properties (GetAccess = 'public', SetAccess = 'private')
+    properties (GetAccess = 'public', SetAccess = 'private')        
         uuid       = char(java.util.UUID.randomUUID.toString());
         eventTypes = {'com.tws.MarketData'}; 
     end
     
-    properties (GetAccess = 'public', SetAccess = 'private')
+    properties (GetAccess = 'public', SetAccess = 'private')        
         session    ;
         reqId      ;
         listenerMap;
@@ -17,12 +17,12 @@ classdef EventHandler < TWS.EventHandler
         reverseContractMap;        
     end
     
-    properties (Access = 'private')
+    properties (Access = 'private')                                 
         logger;
         eventListenerHandle;
     end
     
-    properties(Constant)
+    properties (Constant)                                           
         
         % list of metadata ticks
         genericTickList = [                                      ...
@@ -37,6 +37,7 @@ classdef EventHandler < TWS.EventHandler
     
     methods (Access = 'private')
         
+        % @Constructor
         function this = EventHandler()                              
             
             % init the logger
@@ -193,6 +194,56 @@ classdef EventHandler < TWS.EventHandler
             % set the output arg
             rid = this.reqId;
         end
+        
+        function unsubscribe(this,varargin)                         
+            
+            % input is reqId
+            if numel(varargin) == 1 && isa(varargin{1},'double')
+                this.unsubscribeForReqId(varargin{1}); return
+            end
+            
+            % input is listener
+            if numel(varargin) == 1 && isa(varargin{1},'TWS.EventListener')
+                this.unsubscribeForObj(varargin{1}); return
+            end
+           
+            % input is contract
+            if numel(varargin) == 1 && isa(varargin{1},'com.ib.client.Contract')
+                this.unsubscribeForContract(varargin{1}); return;
+            end
+           
+            % input is contract and object
+            if numel(varargin) == 2
+
+                % set the args
+                listener = varargin{2}; contract = varargin{1};
+               
+                % swap the args if needed
+                if isa(varargin{1},'TWS.EventListener'); listener = varargin{1}; contract = varargin{2}; end
+                
+                % remove object for contract
+                this.unsubscribeForContractForObj(contract,listener);
+            end
+        end
+        
+        function notify(this,event)                                 
+            
+            % make sure this is actual a reqId in the map first
+            if ~this.listenerMap.isKey(event.data.reqId); 
+                
+                % blab about it on the logger
+                this.logger.debug([TWS.Logger.this,'> ','reqId not found: ',num2str(event.data.reqId)]);
+            end
+            
+            % get the list of handlers for this event
+            h=this.listenerMap(event.data.reqId);
+            
+            % notify each listener of event
+            for i = 1:numel(h); h(i).process(event.data); end
+        end
+    end
+    
+    methods(Access = 'private')   
         
         function unsubscribeForReqId(this,rid)                      
             
@@ -431,53 +482,6 @@ classdef EventHandler < TWS.EventHandler
 
             % make logger call to note  new market data request
             this.logger.debug([TWS.Logger.this,'> ', contractStr,' removed listener ',obj.uuid]);
-        end
-            
-        function unsubscribe(this,varargin)                              
-            
-            % input is reqId
-            if numel(varargin) == 1 && isa(varargin{1},'double')
-                this.unsubscribeForReqId(varargin{1}); return
-            end
-            
-            % input is listener
-            if numel(varargin) == 1 && isa(varargin{1},'TWS.EventListener')
-                this.unsubscribeForObj(varargin{1}); return
-            end
-           
-            % input is contract
-            if numel(varargin) == 1 && isa(varargin{1},'com.ib.client.Contract')
-                this.unsubscribeForContract(varargin{1}); return;
-            end
-           
-            % input is contract and object
-            if numel(varargin) == 2
-
-                % set the args
-                listener = varargin{2}; contract = varargin{1};
-               
-                % swap the args if needed
-                if isa(varargin{1},'TWS.EventListener'); listener = varargin{1}; contract = varargin{2}; end
-                
-                % remove object for contract
-                this.unsubscribeForContractForObj(contract,listener);
-            end
-        end
-        
-        function notify(this,event)                                 
-            
-            % make sure this is actual a reqId in the map first
-            if ~this.listenerMap.isKey(event.data.reqId); 
-                
-                % blab about it on the logger
-                this.logger.debug([TWS.Logger.this,'> ','reqId not found: ',num2str(event.data.reqId)]);
-            end
-            
-            % get the list of handlers for this event
-            h=this.listenerMap(event.data.reqId);
-            
-            % notify each listener of event
-            for i = 1:numel(h); h(i).process(event.data); end
         end
     end
     
