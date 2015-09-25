@@ -241,29 +241,55 @@ classdef EventHandler < TWS.EventHandler
             % notify each listener of event
             for i = 1:numel(h); h(i).process(event.data); end
         end
+        
+        function routingTable(this)                                        
+            
+            % get list of request ids
+            reqIds = this.listenerMap.keys;
+            
+            % for each rid print contract + listeners
+            for i = 1:numel(reqIds)
+                
+                % get the i'th request id
+                rid = reqIds{i};
+                
+                % get the contract for this rid
+                contract = this.contractMap.get(rid);
+                
+                % get listeners associated with the request id
+                listeners = this.listenerMap(rid);
+                
+                % create contract string for logging messages
+                contractStr = [char(contract.m_symbol),'@',char(contract.m_primaryExch),' [',char(contract.m_secType),']'];
+                
+                % init entry header
+                fprintf('%3d: %s\n',rid,contractStr);
+                
+                % print each listener
+                for j = 1:numel(listeners)
+                    
+                    % get the i'th listener
+                    l = listeners(j);
+                    
+                    % print the listener
+                    fprintf('    %s\n',l.uuid);
+                end
+            end
+        end
     end
     
     methods(Access = 'private')   
         
         function unsubscribeForReqId(this,rid)                      
             
-            if nargin ~=2
+            % enforce function signature
+            if nargin ~=2 || ~isa(rid,'double')
                 
                 % yammer on about it in the log
                 this.logger.error([TWS.Logger.this,'> ', 'arg 1 must be integer request id']);
                 
                 % for now, raise formal matlab error
                 error('arg1 must be integer request id'); 
-            end
-            
-            % enforce function signature
-            if ~isa(rid,'double')
-                
-                % yell
-                this.logger.error([TWS.Logger.this,'> ',' arg 1 must be of type double']);
-                
-                % rais formal matlab error
-                error('arg1 must be of type double');
             end
             
             % make sure that the request id exists in both maps
@@ -440,6 +466,13 @@ classdef EventHandler < TWS.EventHandler
             
             % create contract string for logging messages
             contractStr = [char(contract.m_symbol),'@',char(contract.m_primaryExch),' [',char(contract.m_secType),']'];
+            
+            % make sure the contract exists
+            if ~this.reverseContractMap.containsKey(contract)
+                
+                % yell, scream, shout 
+                this.logger.error([TWS.Logger.this,'> ',' contract not found: ',contractStr]); return;
+            end
             
             % get reqId for this contract
             rid = this.reverseContractMap.get(contract);
