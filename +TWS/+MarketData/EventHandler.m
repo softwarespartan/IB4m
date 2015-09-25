@@ -125,11 +125,17 @@ classdef EventHandler < TWS.EventHandler
                 % get the request id for this contract
                 rid = this.reverseContractMap.get(contract);
                 
-                % add to list of listeners
-                this.reverseObjMap.put(listener.uuid,rid);
+                % get cell array of listener objs
+                listeners = this.listenerMap(rid);
                 
                 % simply add the listener to existing subscription
-                this.listenerMap(rid) = [this.listenerMap(rid),listener]; 
+                listeners{end+1} = listener;
+                
+                % set the updated cell array as new value in map
+                this.listenerMap(rid) = listeners; 
+                
+                % add to list of listeners
+                this.reverseObjMap.put(listener.uuid,rid);
                 
                 % blab at the logger about adding listener to existing subscription
                 this.logger.debug([TWS.Logger.this,'> ','object ',listener.uuid,' added to existing subscription for ', contractStr]);
@@ -163,7 +169,7 @@ classdef EventHandler < TWS.EventHandler
             this.reqId = this.reqId + 1;
             
             % update request id map
-            this.listenerMap(this.reqId) = listener;
+            this.listenerMap(this.reqId) = {listener};
             
             % update contract id map
             this.contractMap.put(this.reqId,contract);
@@ -232,17 +238,17 @@ classdef EventHandler < TWS.EventHandler
             if ~this.listenerMap.isKey(event.data.reqId); 
                 
                 % blab about it on the logger
-                this.logger.debug([TWS.Logger.this,'> ','reqId not found: ',num2str(event.data.reqId)]);
+                this.logger.trace([TWS.Logger.this,'> ','reqId not found: ',num2str(event.data.reqId)]); return;
             end
             
             % get the list of handlers for this event
             h=this.listenerMap(event.data.reqId);
             
             % notify each listener of event
-            for i = 1:numel(h); h(i).process(event.data); end
+            for i = 1:numel(h); h{i}.process(event.data); end
         end
         
-        function routingTable(this)                                        
+        function routingTable(this)                                 
             
             % get list of request ids
             reqIds = this.listenerMap.keys;
@@ -269,7 +275,7 @@ classdef EventHandler < TWS.EventHandler
                 for j = 1:numel(listeners)
                     
                     % get the i'th listener
-                    l = listeners(j);
+                    l = listeners{i};
                     
                     % print the listener
                     fprintf('    %s\n',l.uuid);
@@ -324,7 +330,7 @@ classdef EventHandler < TWS.EventHandler
             for i = 1:numel(listeners)
                 
                 % get the i'th listener
-                l = listeners(i);
+                l = listeners{i};
                 
                 % get associated request ids
                 reqIds = this.reverseObjMap.get(l.uuid);
@@ -416,7 +422,7 @@ classdef EventHandler < TWS.EventHandler
                 listeners = this.listenerMap(rid);
                 
                 % go though list of listeners and remove listener with matching uuid
-                indx = strcmp(obj.uuid, {listeners.uuid});
+                indx = strcmp(obj.uuid, cellfun(@(ll)ll.uuid,listeners,'UniformOutput',false));
                 
                 % sanity check - part 1
                 if ~any(indx)   

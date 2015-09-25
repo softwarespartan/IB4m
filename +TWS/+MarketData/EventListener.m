@@ -5,7 +5,7 @@ classdef EventListener < TWS.EventListener
         uuid;
         eventTypes = {'com.tws.MarketData'}; 
     end
-    
+
     methods (Access = 'public')
         
         function this = EventListener()
