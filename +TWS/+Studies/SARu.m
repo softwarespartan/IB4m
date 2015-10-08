@@ -1,7 +1,7 @@
 classdef SARu < TWS.Studies.Function
     
     properties (Access = 'private')
-        l1 = nan; l2 = nan; ep = -inf; alpha = 0.02; initAlpha = 0.02; alphaStep = 0.02; maxAlpha = 0.2;
+        alpha = 0.02; initAlpha = 0.02; alphaStep = 0.02; maxAlpha = 0.2; ep = -inf; l1 = nan; l2 = nan;
     end
     
     methods
@@ -71,37 +71,25 @@ classdef SARu < TWS.Studies.Function
     
     methods (Access = 'private')
         
+        function result = initWithBar(this,bar)
+            
+            % set initial values for study given first bar
+            this.value = bar.low; this.ep = bar.high;  this.alpha = this.initAlpha; 
+            
+            % reset price range for previous two bars to low
+            this.l1 = bar.low; this.l2 = bar.low; 
+            
+            % we're done
+            result = this.value;
+        end
+        
         function result = doApply(this,bar)
             
             % have we seen a bar yet?
-            if isnan(this.value)
-                
-                % set initial values for study given first bar
-                this.value = bar.low; this.ep = bar.high;  this.alpha = this.initAlpha; this.l1 = bar.low; 
-                
-                % set the output value
-                result = this.value;
-                
-                % we're done
-                return;
-            end
-            
+            if isnan(this.value); result = this.initWithBar(bar); return; end
+
              % the signal calculation - the price action has hit/below the stop
-            if bar.low  < this.value
-                
-                % reset all the study parameters
-                this.value = bar.low       ; 
-                this.ep    = bar.high      ; 
-                this.alpha = this.initAlpha; 
-                this.l1    = bar.low       ; 
-                this.l2    = bar.low       ;
-                
-                % set the output result
-                result = this.value;
-                
-                % we're done
-                return; 
-            end
+            if bar.low  < this.value; result = this.initWithBar(bar); return; end
             
             % update SAR with current bar
             this.value = this.value + this.alpha * ( this.ep - this.value );
