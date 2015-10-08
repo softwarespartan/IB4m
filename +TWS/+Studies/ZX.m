@@ -17,7 +17,7 @@ classdef ZX < TWS.Studies.Function
             if nargin ~= 2; error('apply takes exactly a single argument'); end
             
             % check if empty, if yes -- return the no zero crossing
-            if isempty(val); result = 0; return; end;
+            if isempty(val); result = this.value; return; end;
             
             % make sure either vector or column
             if ~any(size(val)==1); error('arg1 must be 1xN or Nx1 of values to apply sequentially'); end
