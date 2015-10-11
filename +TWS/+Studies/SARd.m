@@ -1,7 +1,7 @@
 classdef SARd < TWS.Studies.Function
     
-    properties (Access = 'private')
-        alpha = 0.02; initAlpha = 0.02; alphaStep = 0.02; maxAlpha = 0.2; ep = -inf; l1 = nan; l2 = nan;
+    properties (GetAccess = 'public', SetAccess = 'private')
+        alpha = 0.02; initAlpha = 0.02; alphaStep = 0.02; maxAlpha = 0.2; ep = +inf; l1 = nan; l2 = nan;
     end
     
     methods
@@ -52,6 +52,9 @@ classdef SARd < TWS.Studies.Function
             % enforce function signature
             if nargin ~= 2; error('apply takes exactly one argument of type com.tws.Bar'); end
             
+            % return current value ?
+            if isempty(bar); result = this.value; return; end
+            
             % enforce input type
             if ~isa(bar,'com.tws.Bar'); error('input arg1 must be of type com.tws.Bar'); end
             
@@ -83,13 +86,13 @@ classdef SARd < TWS.Studies.Function
             result = this.value;
         end
         
-        function result = doApply(this,bar)
+        function result = doApply(this,bar)    
             
             % have we seen a bar yet?
             if isnan(this.value); result = this.initWithBar(bar); return; end
 
-             % the signal calculation - the price action has hit/above the stop
-            if bar.high  > this.value; result = this.initWithBar(bar); return; end
+            % the signal calculation - the price action has hit/above the stop
+            %if bar.high  > this.value; result = this.initWithBar(bar); return; end
             
             % update SAR with current bar
             this.value = this.value + this.alpha * ( this.ep - this.value );
@@ -107,7 +110,7 @@ classdef SARd < TWS.Studies.Function
                 this.alpha = min([ this.alpha + this.alphaStep, this.maxAlpha ]);
             end
             
-            % update the lows/range for previous two bars
+            % update the highs/range for previous two bars
             this.l2 = this.l1;  this.l1 = bar.high;
             
             % set output value
