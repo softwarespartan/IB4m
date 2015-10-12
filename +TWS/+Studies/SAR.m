@@ -1,4 +1,5 @@
 classdef SAR < TWS.Studies.Function
+% Parabolic Stop and Reverse (PSAR)    
     
     properties (GetAccess = 'public',SetAccess = 'private')
         sarud; isUpTrend; isDownTrend;  initAlpha = 0.02;  alphaStep = 0.02;  maxAlpha = 0.2;
@@ -66,8 +67,6 @@ classdef SAR < TWS.Studies.Function
                 % reverse the trend direction
                 this.isUpTrend = false;  this.isDownTrend = true;  
                 
-                %result = this.sarud.ep;
-                
                 % reinitialize SAR for down trend with initial SAR value of EP-of-prior-trend and EP of current bar
                 this.sarud = TWS.Studies.SARd(this.initAlpha,this.alphaStep,this.maxAlpha,this.sarud.ep,bar.high);
                 
@@ -83,8 +82,6 @@ classdef SAR < TWS.Studies.Function
                 
                 % reverse the trend direction
                 this.isDownTrend = false;  this.isUpTrend = true;
-                
-                %result = this.sarud.ep;
                 
                 % reinitialize SAR for up trend with initial SAR value of EP-of-prior-trend and EP of current bar range
                 this.sarud = TWS.Studies.SARu(this.initAlpha,this.alphaStep,this.maxAlpha,this.sarud.ep,bar.low);

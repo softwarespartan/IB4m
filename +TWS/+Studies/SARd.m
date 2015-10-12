@@ -52,23 +52,35 @@ classdef SARd < TWS.Studies.Function
             % enforce function signature
             if nargin ~= 2; error('apply takes exactly one argument of type com.tws.Bar'); end
             
-            % return current value ?
+            % check if empty - this is standard behavior for TWS.Studies.Function([])
             if isempty(bar); result = this.value; return; end
             
             % enforce input type
-            if ~isa(bar,'com.tws.Bar'); error('input arg1 must be of type com.tws.Bar'); end
+            if ~isa(bar,'cell') &&  ~isa(bar,'com.tws.Bar')  &&  ~isa(bar,'com.tws.Bar[]')
+                  error('input arg1 must be of type com.tws.Bar'); 
+            end
             
-            % check if empty - this is standard behavior for TWS.Studies.Function([])
-            if isempty(bar); result = this.value; return; end;
+            % enforce cell array content type
+            if isa(bar,'cell') && ~isa(bar{1},'com.tws.Bar'); error('input arg1 must be of type com.tws.Bar'); end
             
             % make sure either vector or column
             if ~any(size(bar)==1); error('arg1 must be 1xN or Nx1 of values to apply sequentially'); end
-            
+
             % mem alloc for result
             result = nan(size(bar));
             
             % apply values sequentially
-            for i = 1:numel(bar); result(i) = this.doApply(bar); end
+            for i = 1:numel(bar); 
+                
+                % get the i'th bar (F.ix/F.Part)
+                if isa(bar,'cell'); bi = bar{i}; else bi = bar(i); end
+                
+                % calculate the i'th result/function value
+                result(i) = this.doApply(bi);  
+                
+                % set the current function value to last result
+                this.value = result(i);
+            end
         end
     end
     
@@ -77,13 +89,10 @@ classdef SARd < TWS.Studies.Function
         function result = initWithBar(this,bar)
             
             % set initial values for study given first bar
-            this.value = bar.high; this.ep = bar.low;  this.alpha = this.initAlpha; 
+            result = bar.high; this.ep = bar.low;  this.alpha = this.initAlpha; 
             
             % reset price range for previous two bars to high
             this.l1 = bar.high; this.l2 = bar.high; 
-            
-            % we're done
-            result = this.value;
         end
         
         function result = doApply(this,bar)    
@@ -91,14 +100,14 @@ classdef SARd < TWS.Studies.Function
             % have we seen a bar yet?
             if isnan(this.value); result = this.initWithBar(bar); return; end
 
-            % the signal calculation - the price action has hit/above the stop
-            %if bar.high  > this.value; result = this.initWithBar(bar); return; end
+            % the signal calculation - the price action has hit/above the stop 
+            if bar.high  > this.value; result = this.initWithBar(bar); return; end
             
             % update SAR with current bar
-            this.value = this.value + this.alpha * ( this.ep - this.value );
+            result = this.value + this.alpha * ( this.ep - this.value );
             
             % make sure that current SAR value is below range of privious two bars
-            this.value = max([ this.value, this.l1, this.l2 ]);
+            result = max([ result, this.l1, this.l2 ]);
             
             % check for new extreme point 
             if bar.low < this.ep
@@ -112,10 +121,6 @@ classdef SARd < TWS.Studies.Function
             
             % update the highs/range for previous two bars
             this.l2 = this.l1;  this.l1 = bar.high;
-            
-            % set output value
-            result = this.value;
         end
     end
 end
-
