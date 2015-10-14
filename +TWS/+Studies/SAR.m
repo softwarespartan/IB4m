@@ -28,26 +28,41 @@ classdef SAR < TWS.Studies.Function
         
         % @Override
         function result = apply(this,bar)
-            
+           
             % enforce function signature
             if nargin ~= 2; error('apply takes exactly one argument of type com.tws.Bar'); end
             
-            % enforce input type
-            if ~isa(bar,'com.tws.Bar'); error('input arg1 must be of type com.tws.Bar'); end
-            
             % check if empty - this is standard behavior for TWS.Studies.Function([])
-            if isempty(bar); result = this.value; return; end;
+            if isempty(bar); result = this.value; return; end
+            
+            % enforce input type
+            if ~isa(bar,'cell') &&  ~isa(bar,'com.tws.Bar')  &&  ~isa(bar,'com.tws.Bar[]')
+                  error('input arg1 must be of type com.tws.Bar'); 
+            end
+            
+            % enforce cell array content type
+            if isa(bar,'cell') && ~isa(bar{1},'com.tws.Bar'); error('input arg1 must be of type com.tws.Bar'); end
             
             % make sure either vector or column
             if ~any(size(bar)==1); error('arg1 must be 1xN or Nx1 of values to apply sequentially'); end
-            
+
             % mem alloc for result
             result = nan(size(bar));
             
             % apply values sequentially
-            for i = 1:numel(bar); result(i) = this.doApply(bar); end
+            for i = 1:numel(bar); 
+                
+                % get the i'th bar (F.ix/F.Part)
+                if isa(bar,'cell'); bi = bar{i}; else bi = bar(i); end
+                
+                % calculate the i'th result/function value
+                result(i) = this.doApply(bi);  
+                
+                % set the current function value to last result
+                this.value = result(i);
+            end
             
-            % set the final value
+            % set the current value of the function to last result
             this.value = result(end);
         end
     end
@@ -61,8 +76,6 @@ classdef SAR < TWS.Studies.Function
             
             % check uptrend ended ?
             if this.isUpTrend && bar.low < this.value
-                
-                fprintf('up trend ended')
                 
                 % reverse the trend direction
                 this.isUpTrend = false;  this.isDownTrend = true;  
@@ -93,11 +106,8 @@ classdef SAR < TWS.Studies.Function
                 return;
             end
             
-            % trend is ongoing so just update SAR
-            this.value = this.sarud(bar);
-            
             % set the output result 
-            result = this.value;
+            result = this.sarud(bar);
         end
     end
 end

@@ -2,7 +2,7 @@ classdef ADX < TWS.Studies.Function
 % Average Directional Movement Index
     
     properties (GetAccess = 'public', SetAccess = 'private')
-        period; emaDX; DIp; DIm;
+        period; emaDX; DIp; DIm; numBars;
     end
     
     methods
@@ -18,7 +18,7 @@ classdef ADX < TWS.Studies.Function
             end
             
             % init function value and period
-            this.value = nan;  this.period = period;
+            this.value = nan;  this.period = period; this.numBars = 1;
             
             % init directional indicators +/-DI
             this.DIp  = TWS.Studies.DIp(period);
@@ -80,6 +80,12 @@ classdef ADX < TWS.Studies.Function
             
             % update DX moving average
             result = this.emaDX(DX*100);
+            
+            % do not produce ADX until 2*period
+            if this.numBars < 2 * this.period; result = nan; end;
+            
+            % update number of bars
+            this.numBars = this.numBars + 1;
         end    
     end  
 end
