@@ -1,27 +1,31 @@
-classdef ATR < TWS.Studies.Function
-% Average True Range
+classdef ADX < TWS.Studies.Function
+% Average Directional Movement Index
     
     properties (GetAccess = 'public', SetAccess = 'private')
-        buf; previousClose;
+        period; emaDX; DIp; DIm;
     end
     
     methods
         
-        function this = ATR(period)
+        function this = ADX(period)
             
             % call parent constructor
             this@TWS.Studies.Function();
             
-            % enforce input parameter type of integer
-            if ~isa(period,'double') || period ~= floor(period); 
-                error('input arg1 must be integer period'); 
+            % make sure period is positive integer
+            if ~isa(period,'double') || period <= 0 || period ~= floor(period)
+                error('input arg1 must be positive integer period');
             end
             
-            % initialize the buffer
-            this.buf = TWS.Studies.BUFFER(period);
+            % init function value and period
+            this.value = nan;  this.period = period;
             
-            % init function value and previous close
-            this.value = nan;  this.previousClose = nan;
+            % init directional indicators +/-DI
+            this.DIp  = TWS.Studies.DIp(period);
+            this.DIm  = TWS.Studies.DIm(period);
+            
+            % init DX exponential moving average
+            this.emaDX  = TWS.Studies.EMA(period);
         end
         
         function result = apply(this,bar)
@@ -66,26 +70,16 @@ classdef ATR < TWS.Studies.Function
     
     methods (Access = 'private')
         
-        
         function result = doApply(this,bar)
+
+            % compute directional indicators
+            dip = this.DIp(bar);  dim = this.DIm(bar);
             
-            % calculate the true range for current bar
-            trueRange = max(                                   ...
-                            [                                  ...
-                             abs(bar.high-bar.low),            ...
-                             abs(this.previousClose-bar.high), ...
-                             abs(this.previousClose-bar.low)   ...
-                            ]                                  ...
-            );
+            % compute directional index from indicators
+            DX = 0;  if (dip+dim) > 0; DX = abs(dip-dim)/(dip+dim); end
             
-            % add the true range to the buffer
-            this.buf(trueRange);  
-            
-            % compute mean over window of values
-            result = mean(this.buf());
-            
-            % update the previous close
-            this.previousClose = bar.close;
-        end 
-    end
+            % update DX moving average
+            result = this.emaDX(DX*100);
+        end    
+    end  
 end

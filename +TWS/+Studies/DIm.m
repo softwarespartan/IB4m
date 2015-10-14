@@ -1,29 +1,31 @@
-classdef ATR < TWS.Studies.Function
-% Average True Range
+classdef DIm < TWS.Studies.Function
+% -DI directional indicator
     
     properties (GetAccess = 'public', SetAccess = 'private')
-        buf; previousClose;
+        period;  lastBar;  emaDM;  emaTR;
     end
     
     methods
         
-        function this = ATR(period)
+        function this = DIm(period)
             
             % call parent constructor
             this@TWS.Studies.Function();
             
-            % enforce input parameter type of integer
-            if ~isa(period,'double') || period ~= floor(period); 
-                error('input arg1 must be integer period'); 
-            end
+            % make sure period is positive integer
+            if ~isa(period,'double') || period <= 0 || period ~= floor(period)
+                error('input arg1 must be positive integer period');  end
             
-            % initialize the buffer
-            this.buf = TWS.Studies.BUFFER(period);
+            % init period and function value
+            this.period = period;  this.value = nan;  
             
-            % init function value and previous close
-            this.value = nan;  this.previousClose = nan;
+            % init moving average movement
+            this.emaDM = TWS.Studies.EMA(period);
+            
+            % init moving average for true range
+            this.emaTR = TWS.Studies.EMA(period);
         end
-        
+    
         function result = apply(this,bar)
            
             % enforce function signature
@@ -66,26 +68,35 @@ classdef ATR < TWS.Studies.Function
     
     methods (Access = 'private')
         
-        
         function result = doApply(this,bar)
             
-            % calculate the true range for current bar
-            trueRange = max(                                   ...
-                            [                                  ...
-                             abs(bar.high-bar.low),            ...
-                             abs(this.previousClose-bar.high), ...
-                             abs(this.previousClose-bar.low)   ...
-                            ]                                  ...
-            );
+            % init +DI, +DM, and -DM
+            dmp = 0;  dmm = 0;
             
-            % add the true range to the buffer
-            this.buf(trueRange);  
+            % is this the first bar?
+            if isnan(this.value); this.lastBar = bar; end
             
-            % compute mean over window of values
-            result = mean(this.buf());
+            % is the current bar high greater than last bar high ?
+            if bar.high > this.lastBar.high; dmp = bar.high - this.lastBar.high; end
             
-            % update the previous close
-            this.previousClose = bar.close;
-        end 
+            % is the current bar low lower than last bar low ? 
+            if bar.low < this.lastBar.low; dmm = this.lastBar.low - bar.low; end
+            
+            % ok figure out if DM possitive or DM is negative
+            if dmp > dmm; dmm = 0; end;  if dmp < dmm; dmp = 0; end %#ok<NASGU>
+           
+            % now get true range for this bar
+            tr = max([                                     ...
+                      abs(         bar.high  - bar.low  ), ...
+                      abs(this.lastBar.close - bar.high ), ...
+                      abs(this.lastBar.close - bar.low  )  ...
+                     ]);
+            
+            % compute -DI 
+            result = ( this.emaDM(dmm) / this.emaTR(tr) ) * 100;
+            
+            % update last bar 
+            this.lastBar = bar;
+        end
     end
 end
