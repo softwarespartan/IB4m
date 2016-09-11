@@ -80,3 +80,9 @@ count = count(indx);  bars.count  = count(uix);
 
 % sort the data (just incase)
 data = data(indx);  data = data(uix);
+
+% plot some data
+plot(bars.dt,bars.close); datetick;
+
+% clear data buffer
+dataBuf.clear();
