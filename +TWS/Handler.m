@@ -1,7 +1,7 @@
 classdef Handler < handle
     
-    properties(Constant)
-        accountNumber = 'DU207406';
+    properties(GetAccess = 'public', SetAccess = 'private')
+        accountNumber = '';
     end
     
     properties(Access = 'private')
@@ -11,9 +11,9 @@ classdef Handler < handle
             'NetLiquidation'              ,...
             'TotalCashValue'              ,...
             'BuyingPower'                 ,...
-            'GrossPositionValue,'          ,...
-            'MaintMarginReq,'              ,...
-            'AvailableFunds,'              ,...
+            'GrossPositionValue,'         ,...
+            'MaintMarginReq,'             ,...
+            'AvailableFunds,'             ,...
            ];
     end
     
@@ -46,22 +46,28 @@ classdef Handler < handle
     methods (Access = 'public')                        
         
         % make private constructor
-        function this = Handler()
+        function this = Handler(accountNumber)
             
             % init logger
             this.logger = TWS.Logger.getInstance(class(this));
             
-            % get session
+            % set the account number
+            this.accountNumber = accountNumber;
+            
+            % blab about starting initialization
+            this.logger.info([TWS.Logger.this,'>', ' initializing handler for ', this.accountNumber]);
+            
+            % get session instance
             this.session = TWS.Session.getInstance();
             
             % if not connected, do not initialize
             if ~this.session.eClientSocket.isConnected()
                 
                 % blab about it on the logger
-                this.logger.error([TWS.Logger.this,'>', ' not connected to TWS -- initialization aborted']);
+                this.logger.error([TWS.Logger.this,'>', ' session not connected to TWS -- initialization aborted']);
                 
                 % make an error of it
-                error(' not connected to TWS -- initialization aborted');         
+                error(' session not connected to TWS -- initialization aborted');         
             end
             
             % init error listener
@@ -139,7 +145,7 @@ classdef Handler < handle
             this.session.eClientSocket.reqAutoOpenOrders(true);
             
             % blab about it on the logger
-            this.logger.trace([TWS.Logger.this,'>', ' initialization complete']);
+            this.logger.trace([TWS.Logger.this,'>', ' handler initialization complete for ', this.accountNumber]);
         end
     end
     
@@ -175,12 +181,12 @@ classdef Handler < handle
         end
         
         function processAccountUpdateEvent(this,event)                
-            this.logger.trace([TWS.Logger.this,'>', ' recived account update event']);
+            this.logger.trace([TWS.Logger.this,'>', ' recived account update event for ', this.accountNumber]);
             this.accountUpdateEventBuf.add(event);
         end
         
         function processAccountSummaryEvent(this,event)               
-            this.logger.trace([TWS.Logger.this,'>', ' recived account update event']);
+            this.logger.trace([TWS.Logger.this,'>', ' recived account summary event for ',this.accountNumber]);
             this.accountSummaryEventBuf.add(event);
         end
         
