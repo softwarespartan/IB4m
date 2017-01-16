@@ -5,7 +5,16 @@ classdef Handler < handle
     end
     
     properties(Access = 'private')
-        nextOrderIdObj;        
+        nextOrderIdObj;  
+        attrkeys = [                       ...
+            'AccountType'                 ,...
+            'NetLiquidation'              ,...
+            'TotalCashValue'              ,...
+            'BuyingPower'                 ,...
+            'GrossPositionValue,'         ,...
+            'MaintMarginReq,'             ,...
+            'AvailableFunds,'             ,...
+           ];
     end
     
     % event buffers
@@ -98,6 +107,9 @@ classdef Handler < handle
             
             % get session
             this.session = TWS.Session.getInstance();
+            
+            % request account summary details
+            this.session.eClientSocket.reqAccountSummary(0,'All',this.attrkeys);  pause(1);
             
             % request events from tws
             this.session.eClientSocket.reqAllOpenOrders();
