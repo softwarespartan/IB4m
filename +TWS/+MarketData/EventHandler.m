@@ -120,7 +120,7 @@ classdef EventHandler < TWS.EventHandler
             end
             
             % make sure the contract does not already exist
-            if this.reverseContractMap.containsKey(contract); 
+            if this.reverseContractMap.containsKey(contract) 
             
                 % get the request id for this contract
                 rid = this.reverseContractMap.get(contract);
@@ -235,7 +235,7 @@ classdef EventHandler < TWS.EventHandler
         function notify(this,event)                                 
             
             % make sure this is actual a reqId in the map first
-            if ~this.listenerMap.isKey(event.data.reqId); 
+            if ~this.listenerMap.isKey(event.data.reqId)
                 
                 % blab about it on the logger
                 this.logger.trace([TWS.Logger.this,'> ','reqId not found: ',num2str(event.data.reqId)]); return;
@@ -394,7 +394,7 @@ classdef EventHandler < TWS.EventHandler
             end
             
             % ok, if we can not resolve uuid then we're done
-            if ~ this.reverseObjMap.containsKey(obj.uuid); 
+            if ~ this.reverseObjMap.containsKey(obj.uuid)
 
                 % yell about it on the log
                 this.logger.error([TWS.Logger.this,'> ','object not found: ',obj.uuid])
@@ -534,7 +534,7 @@ classdef EventHandler < TWS.EventHandler
                 keySet = this.listenerMap.keys();
                 
                 % cancel each request one by one
-                for i = 1:numel(keySet);
+                for i = 1:numel(keySet)
                     
                     % make API call for cancel
                     this.session.eClientSocket.cancelMktData(keySet{i}); 
@@ -549,7 +549,7 @@ classdef EventHandler < TWS.EventHandler
         end
     end
     
-    methods (Static)          
+    methods (Static)                                                
         function instance = getInstance()                           
             persistent localInstance
             if isempty(localInstance) ; localInstance = TWS.MarketData.EventHandler(); end
