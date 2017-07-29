@@ -22,7 +22,7 @@ session.eClientSocket.eConnect('127.0.0.1',7496,0); pause(0.5)
 % 
 
 % request the next order id
-session.eClientSocket.reqIds(true);
+session.eClientSocket.reqIds(true); pause(1);
 
 %% Processing NextValidId Events
 
