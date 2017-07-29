@@ -9,7 +9,7 @@ classdef BUFFER < TWS.Studies.Function
     methods (Access = 'public')
         
         % @Constructor
-        function this = BUFFER(N)     
+        function this = BUFFER(N)        
             
             % enforce function signature
             if nargin ~= 1; error('constructor takes exactly one input arguments'); end
@@ -43,7 +43,7 @@ classdef BUFFER < TWS.Studies.Function
     
     methods(Access = 'private')
         
-        function insertData(this,val) 
+        function insertData(this,val)    
             
             % update the current counter
             this.count = this.count + 1;
@@ -55,7 +55,7 @@ classdef BUFFER < TWS.Studies.Function
             this.buf(this.cindx(1)) = val;
         end
         
-        function d = getData(this)    
+        function d = getData(this)       
             
             % returns data newest --> oldest
             d = this.buf(this.cindx(1:min(numel(this.buf),this.count)));

@@ -18,7 +18,7 @@ classdef SMA < TWS.Studies.Function
         function this = SMA(N,alpha)     
             
             % set default depth for recursion
-            if nargin ~= 2; error('constructor takes exactly two input arguments'); end
+            if nargin ~= 2; error('constructor takes exactly two input arguments: SMA(N,alpha)'); end
             
             % set the averaging weight
             this.alpha = alpha;
