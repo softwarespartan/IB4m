@@ -19,6 +19,7 @@ classdef (Sealed) Events < handle
         SCANNERDATA       = 'TWS_SCANNERDATA'       ;
         OPTIONCOMPUTATION = 'TWS_OPTIONCOMPUTATION' ;
         ERROR             = 'TWS_ERROR'             ;
+        TIME              = 'TWS_TIME'              ;
     end
     
     events                    
@@ -40,6 +41,7 @@ classdef (Sealed) Events < handle
         TWS_SCANNERDATA       ;
         TWS_OPTIONCOMPUTATION ;
         TWS_ERROR             ;
+        TWS_TIME              ;
     end
     
     methods (Access = private)
