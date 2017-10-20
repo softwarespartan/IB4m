@@ -25,13 +25,13 @@ classdef EventHandler < TWS.EventHandler
     properties (Constant)                                           
         
         % list of metadata ticks
-        genericTickList = [                                      ...
-                           '100,101,105,106,107,125,165,166,'    ...
-                           '225,232,221,233,236,258, 47,291,'    ...
-                           '293,294,295,318,370,370,377,377,'    ...
-                           '381,384,384,387,388,391,407,411,'    ...
-                           '428,439,439,456, 59,459,460,499,'    ...
-                           '506,511,512,104,513,514,515,516,517' ...
+        genericTickList = [                                    ...
+                           100,101,105,106,107,125,165,166,    ...
+                           225,232,221,233,236,258, 47,291,    ...
+                           293,294,295,318,370,370,377,377,    ...
+                           381,384,384,387,388,391,407,411,    ...
+                           428,439,439,456, 59,459,460,499,    ...
+                           506,511,512,104,513,514,515,516,517 ...
                           ];
     end
     
@@ -113,6 +113,9 @@ classdef EventHandler < TWS.EventHandler
                         % blab at the logger about already listening ...
                         this.logger.debug([TWS.Logger.this,'> ','object ',listener.uuid,' already registered for ', contractStr]); 
                         
+                        % return the existing request id
+                        rid = rids(i);
+                        
                         % nothing else to do ...
                         return;
                     end
@@ -153,6 +156,9 @@ classdef EventHandler < TWS.EventHandler
             % make sure tick list is a double at this point
             if ~isa(tickList,'double'); error('input arg 2 must be list or array of integer tick ids'); end
             
+            % init tick lists as strings
+            tickListStrArray = cell(1,numel(tickList));
+            
             % make sure that each tick provided is in the generic tick list
             for i = 1:numel(tickList)
                 if ~any(this.genericTickList == tickList(i))
@@ -163,7 +169,13 @@ classdef EventHandler < TWS.EventHandler
                     % throw formal matlab error here since [maybe squelch later]
                     error('input arg 2 must be list or array of integer tick ids');
                 end
+                
+                % convert the tick number to string
+                tickListStrArray{i} = num2str(tickList(i));
             end
+            
+            % join ticks as comma separated string
+            tickListStr = strjoin(tickListStrArray,',');
                 
             % update the request id
             this.reqId = this.reqId + 1;
@@ -195,7 +207,7 @@ classdef EventHandler < TWS.EventHandler
             this.logger.debug([TWS.Logger.this,'> ', contractStr,' initializing new market data request with TWS with listener ',listener.uuid]);
             
             % make the official TWS API call for market data request
-            this.session.eClientSocket.reqMktData(this.reqId,contract,tickList,false,[]);
+            this.session.eClientSocket.reqMktData(this.reqId,contract,tickListStr,false,[]);
             
             % set the output arg
             rid = this.reqId;

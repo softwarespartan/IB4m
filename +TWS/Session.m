@@ -10,7 +10,7 @@ classdef Session < handle
         errorListenerHandle
     end
     
-    methods(Access = 'public')        
+    methods(Access = 'private')        
         
        function this = Session()       
             
