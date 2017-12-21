@@ -26,11 +26,11 @@ session.eClientSocket.reqPositions(); pause(0.5)
 
 %%
 % To check how many events have been returned
-buf.get().data.size()
+if buf.size() ~= 0; buf.get().data.size(); end
 
 %%
 % Keep it simple, print out each event in the buffer to the command window.
-cellfun(@(e)cellfun(@(p)disp(p),collection2cell(e.data)),collection2cell(buf));
+if buf.size() ~= 0; cellfun(@(e)cellfun(@(p)disp(p),collection2cell(e.data)),collection2cell(buf)); end
 
 %% References
 % Interactive Brokers API: 
