@@ -75,6 +75,11 @@ classdef NextOrderId < handle
             this.logger.trace([TWS.Logger.this,'>', ' recived next order id:', num2str(this.nextOrderId)]);
         end
         
+        function refresh(~)
+           % make req for the next order id event
+           TWS.Session.getInstance().eClientSocket.reqIds(true); 
+        end
+        
         function delete(this)                           
             
             % blab
