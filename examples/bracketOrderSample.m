@@ -20,12 +20,11 @@ contract.m_exchange = 'SMART';
 contract.m_currency = 'USD'  ;
 
 % bracket order parameters
-action        = 'BUY'          ;
-quantity      = 100            ;
-limitPrice    = 273.00         ;
-profitPrice   = 275.00         ;
-lossPrice     = 271.00         ;
-parentOrderId = nid.nextOrderId;
+action        = 'BUY' ;
+quantity      = 100   ;
+limitPrice    = 273.00;
+profitPrice   = 275.00;
+lossPrice     = 271.00;
 
 % init orders
 parent     = com.ib.client.Order();
@@ -33,36 +32,36 @@ takeProfit = com.ib.client.Order();
 stopLoss   = com.ib.client.Order();
 
 % configure parent order
-parent.m_orderId           = parentOrderId     ;
-parent.m_account           = 'DU207406'        ;
-parent.m_action            = 'BUY'             ;
-parent.m_orderType         = 'LMT'             ;
-parent.m_totalQuantity     = quantity          ;
-parent.m_lmtPrice          = limitPrice        ;
-parent.m_outsideRth        = true              ;
-parent.m_transmit          = false             ;
+parent.m_orderId           = nid.nextOrderId ;
+parent.m_account           = 'DU207406'      ;
+parent.m_action            = 'BUY'           ;
+parent.m_orderType         = 'LMT'           ;
+parent.m_totalQuantity     = quantity        ;
+parent.m_lmtPrice          = limitPrice      ;
+parent.m_outsideRth        = true            ;
+parent.m_transmit          = false           ;
 
 % configure take profit order
-takeProfit.m_orderId       = parent.m_orderId+1;
-takeProfit.m_account       = 'DU207406'        ;
-takeProfit.m_action        = 'SELL'            ;
-takeProfit.m_orderType     = 'LMT'             ;
-takeProfit.m_totalQuantity = quantity          ;
-takeProfit.m_lmtPrice      = profitPrice       ;
-takeProfit.m_parentId      = parent.m_orderId  ;
-takeProfit.m_outsideRth    = true              ;
-takeProfit.m_transmit      = false             ;
+takeProfit.m_orderId       = nid.nextOrderId ;
+takeProfit.m_account       = 'DU207406'      ;
+takeProfit.m_action        = 'SELL'          ;
+takeProfit.m_orderType     = 'LMT'           ;
+takeProfit.m_totalQuantity = quantity        ;
+takeProfit.m_lmtPrice      = profitPrice     ;
+takeProfit.m_parentId      = parent.m_orderId;
+takeProfit.m_outsideRth    = true            ;
+takeProfit.m_transmit      = false           ;
 
 % configure the stop loss order
-stopLoss.m_orderId         = parent.m_orderId+2;
-stopLoss.m_account         = 'DU207406'        ;
-stopLoss.m_action          = 'SELL'            ;
-stopLoss.m_orderType       = 'STP'             ;
-stopLoss.m_totalQuantity   = quantity          ;
-stopLoss.m_auxPrice        = lossPrice         ;
-stopLoss.m_parentId        = parent.m_orderId  ;
-stopLoss.m_outsideRth      = true              ;
-stopLoss.m_transmit        = true              ;
+stopLoss.m_orderId         = nid.nextOrderId ;
+stopLoss.m_account         = 'DU207406'      ;
+stopLoss.m_action          = 'SELL'          ;
+stopLoss.m_orderType       = 'STP'           ;
+stopLoss.m_totalQuantity   = quantity        ;
+stopLoss.m_auxPrice        = lossPrice       ;
+stopLoss.m_parentId        = parent.m_orderId;
+stopLoss.m_outsideRth      = true            ;
+stopLoss.m_transmit        = true            ;
 
 % package up the bracket order
 bracketOrder = [parent,takeProfit,stopLoss];
