@@ -57,7 +57,12 @@ session.eClientSocket.reqExecutions(0,filter);
 % First create a generic contract for SPY
 
 % create a stock contract for symbol SPY
-contract = com.tws.ContractFactory.GenericStockContract('SPY');
+contract = com.ib.client.Contract();
+contract.symbol('SPY')
+contract.exchange('SMART');
+contract.primaryExch('ISLAND');
+contract.currency('USD');
+contract.secType('STK');
 
 %%
 % Next, create limit order associated with your account to BUY 100 shares at some price
@@ -89,36 +94,3 @@ execEvents = collection2cell(buf);
 %%
 % Print execution details to command window
 disp(execEvents{end}.data)
-
-%% See Also
-% <matlab:showdemo('TWSNextOrderIdExample') TWSNextOrderIdExample> | <matlab:showdemo('TWSOpenOrdersExample') TWSOpenOrdersExample> | <matlab:showdemo('TWSPositionsExample') TWSPositionsExample>
-
-%% References
-% Interactive Brokers API: 
-%
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/econnect.htm eConnect>
-%
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqexecutions.htm EClientSocket:reqExecutions>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/contractdetails.htm EWrapper:contractDetails>
-%
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/order.htm Order>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/tables/supported_order_types.htm SupportedOrderTypes>
-%
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/placeorder.htm EClientSocket:placeOrder>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/cancelorder.htm EClientSocket:cancelOrder>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqglobalcancel.htm EClientSocket:reqGlobalCancel>
-%
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqids.htm EClientSocket:reqIDs>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/nextvalidid.htm EWrapper:NextValidId>
-%
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqautoopenorders.htm EClientSocket:reqAutoOpenOrders>
-% 
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/contract.htm com.ib.client.Contract>
-%
-% TWS@Github:
-%
-% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/ExecutionDetails.java com.tws.ExecutionDetails>
-%
-% Apache Commons:
-%
-% * <https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html CircularFifoBuffer>

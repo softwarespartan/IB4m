@@ -21,13 +21,5 @@ cellfun(@(e)disp(e.data),collection2cell(buf));
 %% References
 % Interactive Brokers API: 
 %
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/econnect.htm EClientSocket:eConnect>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/error.htm EWrapper:error>
-% 
-% TWS@Github:
+%    https://interactivebrokers.github.io/tws-api/error_handling.html
 %
-% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/Error.java Error>
-%
-% Apache Commons:
-%
-% * <https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html CircularFifoBuffer>

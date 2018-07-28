@@ -35,12 +35,4 @@ if buf.size() ~= 0; cellfun(@(e)cellfun(@(p)disp(p),collection2cell(e.data)),col
 %% References
 % Interactive Brokers API: 
 %
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/econnect.htm EClientSocket:eConnect>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqpositions.htm EClientSocket:reqPositions>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/position.htm EWrapper:position>
-% 
-% TWS@Github:
-%
-% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/Position.java com.tws.Position>
-% * <https://github.com/softwarespartan/TWS/blob/master/src/com/ib/client/Contract.java com.ib.client.Contract>
-%
+%    https://interactivebrokers.github.io/tws-api/positions.html

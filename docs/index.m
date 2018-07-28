@@ -16,7 +16,7 @@
 
 %% 
 % Navigate to the IB4m directory in Matlab
-cd ~/Dropbox/IB4m
+cd /some/path/to/IB4m
 
 %%
 % OK, now add _IB4m_ and _IB4m/docs_ to your matlab path 
@@ -24,7 +24,7 @@ addpath(path,pwd);  addpath(path,fullfile(pwd,'docs'))
 
 %%
 % Finally, add TWS.jar to the (dynamic) java classpath
-javaaddpath(fullfile(pwd,'Jar','TWS.jar'))
+javaaddpath(fullfile(pwd,'Jar','TWS973.jar'))
 
 %%
 % You're all set!  Do a quick test to get summary of your IB account
@@ -35,26 +35,6 @@ AccountSummaryExample
 % Also, consider adding TWS.jar to your static java classpath ("edit classpath.txt").  
 % Otherwise, will need to add the jar file after each matlab restart.
 
-%% Tutorials
-%
-% Tutorials for MarketData, Scanner Subscriptions, Execution Details, and more.  Everything you need to get up and running.
-%
-% * <http://softwarespartan.github.io/IB4m/docs/html/ScannerSubscriptionExample.html Market Scanner Subscriptions>
-% * <http://softwarespartan.github.io/IB4m/docs/html/MarketDataExample.html Real-time Market Data (Level I)>
-% * <http://softwarespartan.github.io/IB4m/docs/html/MarketDepthExample.html Real-time Market Depth (Level II)>
-% * <http://softwarespartan.github.io/IB4m/docs/html/HistoricalDataExample.html Historical Data Requests>
-%
-% * <http://softwarespartan.github.io/IB4m/docs/html/ContractDetailsExample.html Obtain Contract Details>
-% * <http://softwarespartan.github.io/IB4m/docs/html/ExecutionDetailsExample.html Subscribe to Order Execution Details>
-% * <http://softwarespartan.github.io/IB4m/docs/html/OpenOrdersExample.html Request OpenOrders>
-%
-% * <http://softwarespartan.github.io/IB4m/docs/html/AccountSummaryExample.html Get Account Summary>
-% * <http://softwarespartan.github.io/IB4m/docs/html/AccountUpdatesExample.html Subscribe to Account Updates>
-% * <http://softwarespartan.github.io/IB4m/docs/html/PortfolioUpdateExample.html Configure real-time Portfolio Updates>
-% * <http://softwarespartan.github.io/IB4m/docs/html/PositionsExample.html Request current positions>
-%
-% * <http://softwarespartan.github.io/IB4m/docs/html/ErrorExample.html Processing API error events>
-% * <http://softwarespartan.github.io/IB4m/docs/html/NextOrderIdExample.html Request and listen for NextOrderId>
 %%
 % Have fun!
 
@@ -63,18 +43,8 @@ AccountSummaryExample
 
 %% References
 %
-% * <http://www.interactivebrokers.com/download/newMark/PDFs/APIprintable.pdf IB API Reference>
-% * <https://www.interactivebrokers.com/download/JavaAPIGettingStarted.pdf Java API Getting Started Guide>
-%
-% * <https://www.interactivebrokers.com/en/?f=%2Fen%2Fcontrol%2Fsystemstandalone.php%3Fos%3Dwin%26amp%3Bib_entity%3D  TraderWorkstation Download (Windows)>
-% * <https://www.interactivebrokers.com/en/?f=%2Fen%2Fcontrol%2Fsystemstandalone.php%3Fos%3Dmac%26amp%3Bib_entity%3D  TraderWorkstation Download (Mac)>
-% * <https://www.interactivebrokers.com/en/?f=%2Fen%2Fcontrol%2Fsystemstandalone.php%3Fos%3Dunix%26amp%3Bib_entity%3D TraderWorkstation Download (Unix)>
-%
-% * <https://www.interactivebrokers.com/en/?f=%2Fen%2Fsoftware%2FinstallationInstructions.php TraderWorkstation Install Instructions>
-%
-% * <https://www.interactivebrokers.com/en/index.php?f=tws&p=papertrader IB PaperTrader>
-% * <http://ibkb.interactivebrokers.com/node/663 IBKB: Open Paper Trading Account>
+%    https://interactivebrokers.github.io/tws-api/index.html
 
 %% System Requirements 
 %
-% IB4m has been tested on OSX 10.10, Windows 7, and Windows 8 with both Java 7 and Java 8 using the latest versions of Trader Workstation (Dec 19, 2014, Server versions 75 and 76)
+% IB4m has been tested on OSX 10.10, Windows 7, and Windows 8 with both Java 7 and Java 8 using the latest versions of Trader Workstation 

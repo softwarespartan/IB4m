@@ -33,7 +33,7 @@ reqTable = java.util.HashMap();
 for i = 1:numel(e)
     
     % get the options contract object 
-    optContract = e{i}.contractDetails.m_summary;
+    optContract = e{i}.contractDetails.contract();
     
     % make note of the reqId and the contract
     reqTable.put(i,optContract);

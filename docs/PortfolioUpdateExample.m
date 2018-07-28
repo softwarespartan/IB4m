@@ -39,14 +39,4 @@ cellfun(@(e)disp(e.data),collection2cell(buf))
 %% References
 % Interactive Brokers API: 
 %
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/econnect.htm eConnect>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqaccountupdates.htm EClientSocket:reqAccountUpdates>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/updateportfolio.htm EWrapper:updatePortfolio>
-%
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/updateaccountvalue.htm EWrapper:updateAccountValue>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/updateaccounttime.htm EWrapper:updateAccountTime>
-% 
-% TWS@Github:
-%
-% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/PortfolioUpdate.java PortfolioUpdate>
-%
+%    https://interactivebrokers.github.io/tws-api/account_updates.html

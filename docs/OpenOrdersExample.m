@@ -77,7 +77,7 @@ for i = 1:numel(events)
 
         % process OpenOrder events
         case 'com.tws.Handler$OpenOrderEvent'
-            fprintf('OpenOrder: action=%s\n',char(e.data.order.m_action));
+            fprintf('OpenOrder: action=%s\n',char(e.data.order.action));
 
         % process OrderStatus events
         case 'com.tws.Handler$OrderStatusEvent'
@@ -103,21 +103,4 @@ end
 %
 % Interactive Brokers API: 
 %
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/econnect.htm EClientSocket::eConnect>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqallopenorders.htm EClientSocket::reqAllOpenOrders>
-% 
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/openorder.htm EWrapper::openOrder>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/orderstatus.htm EWrapper::orderStatus>
-%
-% TWS@Github:
-%
-% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/OpenOrder.java com.tws.OpenOrder>
-% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/OrderStatus.java com.tws.OrderStatus>
-%
-% Apache Commons:
-%
-% * <https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html CircularFifoBuffer>
-%
-% Wikipedia:
-%
-% * <http://en.wikipedia.org/wiki/Douglas_Adams DouglasAdams>
+%    https://interactivebrokers.github.io/tws-api/open_orders.html

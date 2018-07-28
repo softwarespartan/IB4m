@@ -35,10 +35,4 @@ fprintf('the next order id is: %d\n',buf.get().data.nextOrderId);
 %% References
 % Interactive Brokers API: 
 %
-% * <https://www.intsdferactivebrokers.com/en/software/api/apiguide/java/econnect.htm EClientSocket::eConnect>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqids.htm EClientSocket::reqIds>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/nextvalidid.htm EWrapper::nextValidId>
-%
-% TWS@Github:
-%
-% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/NextOrderId.java com.tws.NextOrderId>
+%    https://interactivebrokers.github.io/tws-api/order_submission.html

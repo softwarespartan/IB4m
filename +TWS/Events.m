@@ -20,6 +20,8 @@ classdef (Sealed) Events < handle
         OPTIONCOMPUTATION = 'TWS_OPTIONCOMPUTATION' ;
         ERROR             = 'TWS_ERROR'             ;
         TIME              = 'TWS_TIME'              ;
+        CONNECTIONCLOSED  = 'TWS_CONNECTIONCLOSED'  ;
+        COMMISSIONREPORT  = 'TWS_COMMISSIONREPORT'  ;
     end
     
     events                    
@@ -42,6 +44,8 @@ classdef (Sealed) Events < handle
         TWS_OPTIONCOMPUTATION ;
         TWS_ERROR             ;
         TWS_TIME              ;
+        TWS_CONNECTIONCLOSED  ;
+        TWS_COMMISSIONREPORT  ;
     end
     
     methods (Access = private)

@@ -18,7 +18,7 @@
 % * High Dividend Yield 
 %
 % and many more.  See 
-% <https://www.interactivebrokers.com/en/software/api/apiguide/tables/available_market_scanners.htm Market Scanner Definitions> 
+% <https://interactivebrokers.github.io/tws-api/market_scanners.html Market Scanner Definitions> 
 % for all avaliable preconfigured scanners and associated "scanCodes".
 
 %% Initialize session with Trader Workstation
@@ -70,25 +70,4 @@ cellfun(@(e)f(e),collection2cell(buf.get.data));
 %
 % Interactive Brokers:
 %
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/tables/available_market_scanners.htm Market Scanner Definitions>
-%
-% Interactive Brokers API: 
-%
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqscannersubscription.htm EClientSocket::reqScannerSubscription>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/cancelscannersubscription.htm EClientSocket::cancelScannerSubscription>
-% 
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/scannerdata.htm EWrapper::scannerData>
-%
-% TWS@Github:
-%
-% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/ScannerData.java com.tws.ScannerData>
-% * <https://github.com/softwarespartan/TWS/blob/master/src/com/ib/client/ScannerSubscription.java com.ib.client.ScannerSubscription>
-%
-% Apache Commons:
-%
-% * <https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html CircularFifoBuffer>
-%
-% Oracle:
-%
-% * <http://docs.oracle.com/javase/8/docs/api/java/util/HashSet.html HashSet>
-%
+%    https://interactivebrokers.github.io/tws-api/market_scanners.html

@@ -16,10 +16,15 @@ session.eClientSocket.eConnect('127.0.0.1',7496,0);
 %% Requesting historical data from IB/TWS
 
 % create an empty stock contract
-contract = com.tws.ContractFactory.GenericStockContract('FB');
+contract = com.ib.client.Contract();
+contract.symbol('FB')
+contract.exchange('SMART');
+contract.primaryExch('ISLAND');
+contract.currency('USD');
+contract.secType('STK');
 
 % request historical data for our contract for a year w/ 1-day bars
-session.eClientSocket.reqHistoricalData(1000001,contract,'20141230 16:00:00','1 Y','1 day','TRADES',1,1,[]); pause(0.5);
+session.eClientSocket.reqHistoricalData(1000001,contract,'20141230 16:00:00','1 Y','1 day','TRADES',1,1,false,[]); pause(0.5);
 
 %% Process historical data event
 %
@@ -84,21 +89,5 @@ subplot(5,1,4:5); bar (dt(indx),vol  (indx)             ); xlim([min(dt),max(dt)
 %
 % Interactive Brokers API: 
 %
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/econnect.htm eConnect>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqhistoricaldata.htm EClientSocket:reqHistoricalData>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/historicaldata.htm EWrapper:historicalData>
-%
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/tables/historical_data_limitations.htm Historical Data Limitations>
-% 
-% TWS@Github:
-%
-% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/Bar.java com.tws.Bar>
-%
-% Apache Commons:
-%
-% * <https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html CircularFifoBuffer>
-%
-% Java Docs:
-%
-% * <http://docs.oracle.com/javase/8/docs/api/java/util/HashSet.html HashSet>
+%    https://interactivebrokers.github.io/tws-api/historical_data.html
 %

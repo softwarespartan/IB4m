@@ -35,15 +35,15 @@ session.eClientSocket.eConnect('127.0.0.1',7496,0);
 %
 % Changes in market data (best ask/bid offer) are communicated through _MarketDataEvents_ associated with EWrapper callbacks:
 %
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/ticksize.htm EWrapper::tickSize>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/tickprice.htm EWrapper::tickPrice>
+% * <https://interactivebrokers.github.io/tws-api/interfaceIBApi_1_1EWrapper.html#a1844eb442fb657c0f2cc0a63e4e74eba EWrapper::tickSize>
+% * <https://interactivebrokers.github.io/tws-api/interfaceIBApi_1_1EWrapper.html#ae851ec3a1e0fa2d0964c7779b0c89718 EWrapper::tickPrice>
 %
 % Many axuillary types of market data ticks can be requested as a part of the market data request.  These data are refered to as 
-% <https://www.interactivebrokers.com/en/software/api/apiguide/tables/generic_tick_types.htm _Generic Ticks_>  
+% https://interactivebrokers.github.io/tws-api/md_request.html#genticks _Generic Ticks_>  
 % and are communicated through _MarketMetadataEvents_.  
 %
 % See
-% <https://www.interactivebrokers.com/en/software/api/apiguide/tables/tick_types.htm Tick Types>
+% <https://interactivebrokers.github.io/tws-api/tick_types.html Tick Types>
 % for additional descriptions of tick types and associated EWrapper callback.  The bottom line is that *tickValue/field < 10 are MarketDataEvents* and everything else is MarketMetadata. 
 %
 
@@ -51,7 +51,12 @@ session.eClientSocket.eConnect('127.0.0.1',7496,0);
 % The first step in constructing a market data request is to specify a contract which encapsulates the equity symbol and exchange information.
 
 % create an empty stock contract
-contract = com.tws.ContractFactory.GenericStockContract('SPY');
+contract = com.ib.client.Contract();
+contract.symbol('SPY')
+contract.exchange('SMART');
+contract.primaryExch('ISLAND');
+contract.currency('USD');
+contract.secType('STK');
 
 %% 
 % By default the exchange for GenericStockContract is 'SMART' which is only appropriate when placing an order request.
@@ -199,28 +204,5 @@ map.get(metabuf.get().data.reqId)
 %% References
 % Interactive Brokers:
 %
-% * <https://www.interactivebrokers.com/en/index.php?f=marketData&p=mdata Market Data Feed Options>
-%
-% Interactive Brokers API: 
-%
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/tables/tick_types.htm Tick Types>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/tables/generic_tick_types.htm Generic Tick Tags>
-%
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/econnect.htm EClientSocket::eConnect>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqmktdata.htm EClientSocket::reqMktData>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/cancelmktdata.htm EClientSocket::cancelMktData>
-% 
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/tickprice.htm EWrapper::tickPrice>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/ticksize.htm EWrapper::tickSize>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/tickstring.htm EWrapper::tickString>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/tickgeneric.htm EWrapper::tickGeneric>
-%
-% TWS@Github:
-%
-% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/MarketData.java com.tws.MarketData>
-% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/MarketMetadata.java com.tws.MarketMetadata>
-%
-% Apache Commons:
-%
-% * <https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html CircularFifoBuffer>
+%    https://interactivebrokers.github.io/tws-api/market_data.html
 %

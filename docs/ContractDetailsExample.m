@@ -16,7 +16,12 @@ session = TWS.Session.getInstance();
 [buf,lh] = TWS.initBufferForEvent(TWS.Events.CONTRACTDETAILS);
 
 % create an empty stock contract
-contract = com.tws.ContractFactory.GenericStockContract('SPY');
+contract = com.ib.client.Contract();
+contract.symbol('SPY')
+contract.exchange('SMART');
+contract.primaryExch('ISLAND');
+contract.currency('USD');
+contract.secType('STK');
 
 % connect to TWS
 session.eClientSocket.eConnect('127.0.0.1',7496,0);
@@ -42,10 +47,17 @@ buf.clear();
 %  In a similar way, contract details for options can be requested. 
 
 % create generic contract for IBM
-contract = com.tws.ContractFactory.GenericStockContract('IBM');
+%contract = com.tws.ContractFactory.GenericStockContract('IBM');
+
+contract = com.ib.client.Contract();
+contract.symbol('IBM')
+contract.exchange('SMART');
+contract.primaryExch('');
+contract.currency('USD');
+contract.secType('OPT');
 
 % configure the contract for options
-contract.m_secType = 'OPT'; contract.m_primaryExch = [];
+%contract.m_secType = 'OPT'; contract.m_primaryExch = [];
 
 % get all the details for this option
 session.eClientSocket.reqContractDetails(0,contract); pause(10)
@@ -65,7 +77,7 @@ numel(details)
 %% 
 
 % get a list of all expiry dates for this option
-expiryDates = cellfun(@(d)char(d.contractDetails.m_summary.m_expiry),details,'UniformOutput',0);
+expiryDates = cellfun(@(d)char(d.contractDetails.realExpirationDate),details,'UniformOutput',0);
 
 % get list of unique expiry dates for this option
 unique(expiryDates)
@@ -77,20 +89,7 @@ unique(expiryDates)
 %% References
 % Interactive Brokers API: 
 %
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqcontractdetails.htm EClientSocket:reqContractDetails>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/contractdetails.htm EWrapper:contractDetails>
+%    http://interactivebrokers.github.io/tws-api/basic_contracts.html
 %
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/contract.htm com.ib.client.Contract>
-% 
-% TWS@Github:
-%
-% * <https://github.com/softwarespartan/TWS/blob/master/src/com/ib/client/Contract.java com.ib.client.Contract>
-% * <https://github.com/softwarespartan/TWS/blob/master/src/com/ib/client/ContractDetails.java com.ib.client.ContractDetails>
-%
-% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/ContractFactory.java com.tws.ContractFactory>
-% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/ContractDetails.java com.tws.ContractDetails>
-%
-% Apache Commons:
-%
-% * <https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html CircularFifoBuffer>
+%    https://interactivebrokers.github.io/tws-api/contract_details.html
 %

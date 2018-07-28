@@ -41,7 +41,10 @@ session.eClientSocket.eConnect('127.0.0.1',7496,0);
 % First create a generic contract for SPY
 
 % create a stock contract for symbol SPY
-contract = com.tws.ContractFactory.GenericStockContract('SPY');
+contract = com.ib.client.Contract();
+contract.symbol('SPY')
+contract.currency('USD');
+contract.secType('STK');
 
 %% 
 % As mentioned above, not all exchanges offer market depth so care must be taken to specify the exact exchange for which to obtain data.
@@ -50,7 +53,7 @@ contract = com.tws.ContractFactory.GenericStockContract('SPY');
 % Therefore must set the exchange explicitly here.
 
 % set the exchange for which to obtain market depth
-contract.m_exchange = 'ISLAND';  contract.m_primaryExch = 'ISLAND';
+contract.exchange('ISLAND');  contract.primaryExch('ISLAND');
 
 %%
 % The request ID is simply any positive integer as long as it is unique at the time the request is placed
@@ -150,22 +153,4 @@ map.get(buf.get().data.reqId)
 %
 % Interactive Brokers API: 
 %
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/reqmktdepth.htm EClientSocket::reqMktData>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/updatemktdepth.htm EWrapper::updateMktDepth>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/updatemktdepthl2.htm EWrapper::updateMktDepthL2>
-% 
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/java/contract.htm com.ib.client.Contract>
-% * <https://www.interactivebrokers.com/en/software/api/apiguide/tables/api_message_codes.htm API Error Codes>
-%
-% TWS@Github:
-%
-% * <https://github.com/softwarespartan/TWS/blob/master/src/com/tws/MarketDepth.java com.tws.MarketDepth>
-%
-% Apache Commons:
-%
-% * <https://commons.apache.org/proper/commons-collections/javadocs/api-3.2.1/org/apache/commons/collections/buffer/CircularFifoBuffer.html CircularFifoBuffer>
-%
-% Oracle:
-%
-% * <http://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html HashMap>
-%
+%    https://interactivebrokers.github.io/tws-api/market_depth.html
