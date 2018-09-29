@@ -22,6 +22,7 @@ classdef (Sealed) Events < handle
         TIME              = 'TWS_TIME'              ;
         CONNECTIONCLOSED  = 'TWS_CONNECTIONCLOSED'  ;
         COMMISSIONREPORT  = 'TWS_COMMISSIONREPORT'  ;
+        MARKETRULE        = 'TWS_MARKETRULE'        ;
     end
     
     events                    
@@ -46,6 +47,7 @@ classdef (Sealed) Events < handle
         TWS_TIME              ;
         TWS_CONNECTIONCLOSED  ;
         TWS_COMMISSIONREPORT  ;
+        TWS_MARKETRULE        ;
     end
     
     methods (Access = private)
