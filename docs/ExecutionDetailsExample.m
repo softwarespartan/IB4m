@@ -65,16 +65,26 @@ contract.currency('USD');
 contract.secType('STK');
 
 %%
-% Next, create limit order associated with your account to BUY 100 shares at some price
+% Next, create limit/market order associated with your account to BUY 100 shares at some price
 
 % create an order with accnt, side, quantity, and price [*USE YOUR IB PAPER TRADING ACCOUNT NUMBER HERE*]
-order = com.tws.OrderFactory.GenericLimitOrder('DU207406', 'BUY', 100, 208.17);
+% see docs here
+%    https://interactivebrokers.github.io/tws-api/basic_orders.html#market
+order = com.ib.client.Order();
+order.account('DU207406')
+order.orderType('MKT');
+order.action('BUY');
+order.totalQuantity(100);
+
+%% for limit buy order, use type "LMT" and specify price
+% order.orderType('LMT');
+% order.lmtPrice(278.61);
 
 %%
 % Finally, place the order using *NextOrderId* along with the contract and order details above 
 
 % place the order with contract and order specifications
-session.eClientSocket.placeOrder(8855,contract,order);  pause(1);
+session.eClientSocket.placeOrder(2,contract,order);  pause(10);
 
 %% Processing Execution Details Events
 % Execution details have a lot of information so make sure to read up on the references listed below.

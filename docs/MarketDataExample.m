@@ -102,7 +102,7 @@ reqId = 0;
 % Having a unique request ID, contract to specify symbol and exchange, and a list of metadata we're ready to make a market data request.
 
 % request market data subscription.  Note that arg4 is read as "snapshot=false"
-session.eClientSocket.reqMktData(reqId,contract,genericTickList,false,[]); pause(1);
+session.eClientSocket.reqMktData(reqId,contract,genericTickList,false,false,[]); pause(1);
 
 %% 
 % It is important to keep in mind that a continuous data subscription has been started so that MarketDataEvents will be streamed until disconnected from TWS or the subscription is cancelled. 
