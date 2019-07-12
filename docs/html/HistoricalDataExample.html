@@ -82,7 +82,7 @@ TWS Time at connection:20141231 09:54:40 EST
 contract = com.tws.ContractFactory.GenericStockContract(<span class="string">'FB'</span>);
 
 <span class="comment">% request historical data for our contract for a year w/ 1-day bars</span>
-session.eClientSocket.reqHistoricalData(1000001,contract,<span class="string">'20141230 16:00:00'</span>,<span class="string">'1 Y'</span>,<span class="string">'1 day'</span>,<span class="string">'TRADES'</span>,1,1,[]); pause(0.5);
+session.eClientSocket.reqHistoricalData(1000001,contract,<span class="string">'20141230 16:00:00'</span>,<span class="string">'1 Y'</span>,<span class="string">'1 day'</span>,<span class="string">'TRADES'</span>,1,1,false,[]); pause(0.5);
 </pre><h2>Process historical data event<a name="3"></a></h2><p>Under the hood, Trader Workstation returns one bar at a time.  That is, EWrapper:historicalData() is called once for each bar.  Each bar associated with the request ID, 1000001 in this case, is aggregated into a single event (i.e. event.data = HashSet&lt;com.tws.Bar&gt;)</p><p>Retreive the historical data event from the buffer</p><pre class="codeinput">hde = buf.get();
 </pre><p>Convert the HashSet&lt;Bar&gt; into more native cell array of bars</p><pre class="codeinput">bars = collection2cell(hde.data);
 </pre><p>Figure out how many bars were returned</p><pre class="codeinput">numel(bars)
