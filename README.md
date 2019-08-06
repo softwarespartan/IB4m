@@ -2,7 +2,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <link rel="stylesheet" type="text/css" href="README.css">
             <meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-01-04"><meta name="DC.source" content="index.m"><style type="text/css">
-                </style></head><body><div class="content"><h1>Welcome to IB4m</h1><p>Interactive Brokers API for Matlab</p><h2>Contents</h2><div><ul><li><a href="#1">Quick Start Guide</a></li><li><a href="#7">Tutorials</a></li><li><a href="#9">Getting More Help</a></li><li><a href="#10">References</a></li><li><a href="#11">System Requirements</a></li></ul></div><h2>Quick Start Guide<a name="1"></a></h2><p>Getting started with IB4m is easy.  Follow the steps below assuming you already have an IB tradding account and Trader Workstation installed.</p>
+                </style></head><body><div class="content"><h1>Welcome to IB4m</h1><p>Interactive Brokers API for Matlab</p><h2>Contents</h2><div><ul><li><a href="#1">Quick Start Guide</a></li><li><a href="#7">Tutorials</a></li><li><a href="#9">Getting More Help</a></li><li><a href="#10">References</a></li><li><a href="#11">System Requirements</a></li></ul></div><h2>Quick Start Guide<a name="1"></a></h2><p>Getting started with IB4m is easy.  The updated Interactive Brokers API docs for v9.73+ are here: https://interactivebrokers.github.io/tws-api/.  Use the code examples in the <pre class="codeinput"><span class="string">IB4m/docs</span></pre> folder which have been updated for v9.73 API. Follow the steps below assuming you already have an IB tradding account and Trader Workstation installed.</p>
                     <div>
                         <ol>
                             <li>Enable API access in TWS for "Active X and Socket Clients"**</li>
@@ -41,7 +41,7 @@ DU207406: AvailableFunds = 1003650.61 (USD)
 </pre>
 <p>To save your matlab path use "savepath" or "pathtool". Also, consider adding TWS.jar to your static java classpath ("edit classpath.txt"). Otherwise, will need to add the jar file after each matlab restart.</p>
 <h2>Tutorials<a name="7"></a></h2>
-<p>Tutorials for MarketData, Scanner Subscriptions, Execution Details, and more.  Everything you need to get up and running.</p>
+<p>Tutorials for MarketData, Scanner Subscriptions, Execution Details, and more.  Everything you need to get up and running.   NOTE: The example codes in the <i>IB4m/docs</i> folder for each of the tutorials below has been updated for API v9.73+ but the html in <i>IB4m/docs/html</i> is still older v9.72 API.  Will update html soon.</p>
 <div><ul>
 <li><a href="http://softwarespartan.github.io/IB4m/docs/html/ScannerSubscriptionExample.html">Market Scanner Subscriptions</a></li>
 <li><a href="http://softwarespartan.github.io/IB4m/docs/html/MarketDataExample.html">Real-time Market Data (Level I)</a></li>
