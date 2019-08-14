@@ -24,6 +24,8 @@ classdef (Sealed) Events < handle
         COMMISSIONREPORT  = 'TWS_COMMISSIONREPORT'  ;
         MARKETRULE        = 'TWS_MARKETRULE'        ;
         HEADTIMESTAMP     = 'TWS_HEADTIMESTAMP'     ;
+        FINANCIALADVISORY = 'TWS_FINANCIALADVISORY' ;
+        FUNDAMENTALDATA   = 'TWS_FUNDAMENTALDATA'   ;
     end
     
     events                    
@@ -50,6 +52,9 @@ classdef (Sealed) Events < handle
         TWS_COMMISSIONREPORT  ;
         TWS_MARKETRULE        ;
         TWS_HEADTIMESTAMP     ;
+        TWS_FINANCIALADVISORY ;
+        TWS_FUNDAMENTALDATA   ;
+        
     end
     
     methods (Access = private)
