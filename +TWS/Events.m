@@ -26,6 +26,7 @@ classdef (Sealed) Events < handle
         HEADTIMESTAMP     = 'TWS_HEADTIMESTAMP'     ;
         FINANCIALADVISORY = 'TWS_FINANCIALADVISORY' ;
         FUNDAMENTALDATA   = 'TWS_FUNDAMENTALDATA'   ;
+        SYMBOLSAMPLE      = 'TWS_SYMBOLSAMPLE'      ;
     end
     
     events                    
@@ -54,6 +55,7 @@ classdef (Sealed) Events < handle
         TWS_HEADTIMESTAMP     ;
         TWS_FINANCIALADVISORY ;
         TWS_FUNDAMENTALDATA   ;
+        TWS_SYMBOLSAMPLE      ;
         
     end
     
