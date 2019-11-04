@@ -1,7 +1,7 @@
 function processNotification( n )
 
     % get the event associated with this notification from handler
-    event = n.getSource().getEvent(n.uuid);
+    event = n.getSource().getEventWithRemove(n.uuid);
 
     % First forward the event to any TWS Notification listeners
     notify(                               ...
