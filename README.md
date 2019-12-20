@@ -65,7 +65,7 @@ DU207406: AvailableFunds = 1003650.61 (USD)
 <li><a href="http://softwarespartan.github.io/IB4m/docs/html/NextOrderIdExample.html">Request and listen for NextOrderId</a></li>
 </ul></div>
 <h2>Getting More Help<a name="9"></a></h2>
-<p>Email brown.2179-at-gmail.com with questions, suggestions, comments etc.</p>
+<p>Feel free to open an issue or email brown.2179-at-gmail.com with questions, suggestions, comments etc.</p>
 
 <h2>References<a name="10"></a></h2>
 
