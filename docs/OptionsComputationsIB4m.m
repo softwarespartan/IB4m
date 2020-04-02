@@ -14,11 +14,12 @@ session = TWS.Session.getInstance();
 % connect to TWS
 session.eClientSocket.eConnect('127.0.0.1',7496,0);
 
-% create generic contract contract object
-contract = com.tws.ContractFactory.GenericStockContract('IBM');
-
-% change security type to "option"
-contract.m_primaryExch = []; contract.m_secType='OPT';
+% create contract object
+contract = com.ib.client.Contract();
+contract.symbol('IBM')
+contract.primaryExch([]);
+contract.currency('USD');
+contract.secType('OPT');
 
 % get all the details for this option
 session.eClientSocket.reqContractDetails(0,contract); pause(2)
