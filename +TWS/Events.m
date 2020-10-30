@@ -30,7 +30,6 @@ classdef (Sealed) Events < handle
         TICKBYTICK_ALLLAST = 'TWS_TICKBYTICK_ALLLAST' ;
         TICKBYTICK_BIDASK  = 'TWS_TICKBYTICK_BIDASK'  ;
         TICKBYTICK_MIDPOINT= 'TWS_TICKBYTICK_MIDPOINT';
-        
     end
     
     events                      
