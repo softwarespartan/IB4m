@@ -79,7 +79,8 @@ contract.secType('STK');
 % All of the exchanges listed above list 'SPY' so any one of them will work for this example.
 
 % set the exchange for which to obtain market data
-contract.m_exchange = 'ARCA';  contract.m_primaryExch = 'ARCA';
+%contract.m_exchange = 'ARCA';  contract.m_primaryExch = 'ARCA';
+contract.exchange('ARCA');  contract.primaryExch('ARCA');
 
 %%
 % Specify the <https://www.interactivebrokers.com/en/software/api/apiguide/tables/generic_tick_types.htm Generic Tick Tags> (metadata) for subscription.  Note that generic ticks cannot be specified if using a _Snapshot_ market data subscription.
