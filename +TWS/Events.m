@@ -30,6 +30,7 @@ classdef (Sealed) Events < handle
         TICKBYTICK_ALLLAST = 'TWS_TICKBYTICK_ALLLAST' ;
         TICKBYTICK_BIDASK  = 'TWS_TICKBYTICK_BIDASK'  ;
         TICKBYTICK_MIDPOINT= 'TWS_TICKBYTICK_MIDPOINT';
+        PNL                = 'TWS_PNL'                ;
     end
     
     events                      
@@ -62,6 +63,7 @@ classdef (Sealed) Events < handle
         TWS_TICKBYTICK_ALLLAST ;
         TWS_TICKBYTICK_BIDASK  ;
         TWS_TICKBYTICK_MIDPOINT;
+        TWS_PNL                ;
     end
     
     methods (Access = private)
